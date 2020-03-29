@@ -5,20 +5,17 @@ var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const CountryDetails = props => {
-  const [data, setData] = useState([
-    { date: "", confirmed: "", recovered: "", deaths: "" }
-  ]);
-  const [confirmed, setConfirmed] = useState([]);
-  const [recovered, setRecovered] = useState([]);
-  const [deaths, setDeaths] = useState([]);
+  const [country, setCountry] = useState("");
+  const [data, setData] = useState([]);
+  const [total, setTotal] = useState({});
 
   const options = {
     animationEnabled: true,
     title: {
-      text: ""
+      text: `İlk tanıdan itibaren günlük ${country} COVID-19 istatistikleri`
     },
     axisY: {
-      title: "Number of Cases",
+      title: "Etkilenen insan sayısı",
       includeZero: false
     },
     toolTip: {
@@ -26,22 +23,31 @@ const CountryDetails = props => {
     },
     data: [
       {
-        type: "spline",
-        name: "Total Cases",
+        type: "area",
+        name: "Toplam Tanılar",
         showInLegend: true,
-        dataPoints: confirmed
+        dataPoints: data.map(confirmed => ({
+          y: confirmed.confirmed,
+          label: confirmed.date
+        }))
       },
       {
-        type: "spline",
-        name: "Recovered Cases",
+        type: "area",
+        name: "İyileşenler",
         showInLegend: true,
-        dataPoints: recovered
+        dataPoints: data.map(recovered => ({
+          y: recovered.recovered,
+          label: recovered.date
+        }))
       },
       {
-        type: "spline",
-        name: "Deaths",
+        type: "area",
+        name: "Ölümler",
         showInLegend: true,
-        dataPoints: deaths
+        dataPoints: data.map(deaths => ({
+          y: deaths.deaths,
+          label: deaths.date
+        }))
       }
     ]
   };
@@ -59,65 +65,37 @@ const CountryDetails = props => {
       `https://api.covid19api.com/total/dayone/country/${country}/status/deaths`
     );
 
-    axios
-      .all([confirmedRequest, recoveredRequest, deathsRequest])
-      .then(
-        axios.spread((...responses) => {
-          const confirmedData = responses[0].map(conf => ({
-            y: conf.Cases,
-            label: conf.Date.substr(0, 10)
-          }));
-          const recoveredData = responses[1].map(rec => ({
-            y: rec.Cases,
-            label: rec.Date.substr(0, 10)
-          }));
-          const deathsData = responses[2].map(death => ({
-            y: death.Cases,
-            label: death.Date.substr(0, 10)
-          }));
-          console.log({ confirmedData, recoveredData, deathsData });
-        })
-      )
-      .catch(err => console.log("THEREIS ERROR"));
+    axios.all([confirmedRequest, recoveredRequest, deathsRequest]).then(
+      axios.spread((...responses) => {
+        setCountry(responses[1].data[0]?.Country);
+        setData(
+          responses[0].data.map(confirmed => {
+            const recovered = responses[1].data.length
+              ? responses[1].data.find(
+                  recovered => recovered.Date === confirmed.Date
+                )
+              : [];
+            const deaths = responses[2].data.length
+              ? responses[2].data.find(death => death.Date === confirmed.Date)
+              : [];
 
-    // axios
-    //   .get()
-    //   .then(res => {
-    //     setConfirmed(
-    //       res.data
-    //         .filter(item => item.Cases)
-    //         .map(({ Cases, Date }) => {
-    //           return { y: Cases, label: Date.substr(0, 10) };
-    //         })
-    //     );
-    //     return axios.get();
-    //   })
-    //   .then(res => {
-    //     setRecovered(
-    //       res.data
-    //         .filter(item => item.Cases)
-    //         .map(({ Cases, Date }) => {
-    //           return { y: Cases, label: Date.substr(0, 10) };
-    //         })
-    //     );
-    //     return axios.get();
-    //   })
-    //   .then(res => {
-    //     setDeaths(
-    //       res.data
-    //         .filter(item => item.Cases)
-    //         .map(({ Cases, Date }) => {
-    //           return { y: Cases, label: Date.substr(0, 10) };
-    //         })
-    //     );
-    //   });
+            return {
+              date: confirmed.Date.substr(0, 10),
+              confirmed: confirmed.Cases,
+              recovered: recovered?.Cases || 0,
+              deaths: deaths?.Cases || 0
+            };
+          })
+        );
+      })
+    );
   };
 
   useEffect(() => {
     getData(slug);
   }, [slug]);
 
-  console.log({ data });
+  console.log(data);
 
   return (
     <div>
