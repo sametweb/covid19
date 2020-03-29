@@ -56,21 +56,24 @@ const Summary = props => {
         dataPoints: [
           {
             label: "Aktif Tanılar",
-            y: stats.active
+            y: stats.active,
+            color: "royalblue"
           },
           {
             label: "İyileşenler",
-            y: stats.recovered
+            y: stats.recovered,
+            color: "limegreen"
           },
           {
             label: "Ölümler",
-            y: stats.deaths
+            y: stats.deaths,
+            color: "orangered"
           }
         ]
       }
     ]
   };
-  console.log(stats);
+  console.log(countries);
 
   return (
     <div>
@@ -100,7 +103,15 @@ const Summary = props => {
             }}
           >
             <th>Ülke</th>
-            <th>Yeni Tanılar</th>
+            <th
+              onClick={() =>
+                setCountries(
+                  countries.sort((a, b) => b.NewConfirmed - a.NewConfirmed)
+                )
+              }
+            >
+              Yeni Tanılar
+            </th>
             <th>Toplam Tanılar</th>
             <th>Yeni Ölümler</th>
             <th>Toplam Ölümler</th>

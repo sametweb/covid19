@@ -23,27 +23,30 @@ const CountryDetails = props => {
     },
     data: [
       {
-        type: "area",
+        type: "line",
         name: "Toplam Tanılar",
         showInLegend: true,
+        color: "royalblue",
         dataPoints: data.map(confirmed => ({
           y: confirmed.confirmed,
           label: confirmed.date
         }))
       },
       {
-        type: "area",
+        type: "line",
         name: "İyileşenler",
         showInLegend: true,
+        color: "limegreen",
         dataPoints: data.map(recovered => ({
           y: recovered.recovered,
           label: recovered.date
         }))
       },
       {
-        type: "area",
+        type: "line",
         name: "Ölümler",
         showInLegend: true,
+        color: "orangered",
         dataPoints: data.map(deaths => ({
           y: deaths.deaths,
           label: deaths.date
