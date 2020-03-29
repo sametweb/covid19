@@ -9,13 +9,22 @@ const Summary = props => {
   useEffect(() => {
     axios
       .get("https://api.covid19api.com/summary")
-      .then(res => setCountries(res.data.Countries))
+      .then(res => {
+        const data = res.data.Countries.filter(
+          country => country.Country && country.TotalConfirmed > 0
+        ).map(country =>
+          country.Country === "US"
+            ? { ...country, Country: "United States of America" }
+            : country
+        );
+        setCountries(data);
+      })
       .catch(err => console.log(err));
   }, []);
-
+  console.log({ search });
   return (
     <div>
-      <h1>COVID-19 İstatistikler</h1>
+      <h1>COVID-19 Ülke Bazında İstatistikler</h1>
       <div className="search">
         <input
           placeholder="ülkelerde ara"
@@ -26,7 +35,13 @@ const Summary = props => {
       </div>
       <table>
         <tbody>
-          <tr>
+          <tr
+            style={{
+              backgroundColor: "#333",
+              color: "white",
+              height: 30
+            }}
+          >
             <th>Ülke</th>
             <th>Yeni Tanılar</th>
             <th>Toplam Tanılar</th>
@@ -36,23 +51,36 @@ const Summary = props => {
             <th>Toplam İyileşenler</th>
           </tr>
           {countries
-            .filter(country =>
-              country.Country.toLowerCase().includes(search.toLowerCase())
+            .filter(({ Country }) =>
+              Country.toLowerCase().includes(search.toLowerCase())
             )
             .map((country, i) => {
               return (
-                <tr
-                  key={country.Slug}
-                  style={i % 2 === 0 ? { backgroundColor: "#e1e1e2" } : {}}
-                >
+                <tr key={i} style={i % 2 ? { backgroundColor: "#f1f1f2" } : {}}>
                   <td>
                     <Link to={country.Slug}>{country.Country}</Link>
                   </td>
-                  <td>{country.NewConfirmed}</td>
+                  <td
+                    style={
+                      country.NewConfirmed ? { color: "rgb(168, 137, 45)" } : {}
+                    }
+                  >
+                    {country.NewConfirmed
+                      ? `+${country.NewConfirmed}`
+                      : country.NewConfirmed}
+                  </td>
                   <td>{country.TotalConfirmed}</td>
-                  <td>{country.NewDeaths}</td>
+                  <td style={country.NewDeaths ? { color: "crimson" } : {}}>
+                    {country.NewDeaths
+                      ? `+${country.NewDeaths}`
+                      : country.NewDeaths}
+                  </td>
                   <td>{country.TotalDeaths}</td>
-                  <td>{country.NewRecovered}</td>
+                  <td style={country.NewRecovered ? { color: "green" } : {}}>
+                    {country.NewRecovered
+                      ? `+${country.NewRecovered}`
+                      : country.NewRecovered}
+                  </td>
                   <td>{country.TotalRecovered}</td>
                 </tr>
               );
