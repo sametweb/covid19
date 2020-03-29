@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import CanvasJSReact from "./assets/canvasjs.react";
+var CanvasJS = CanvasJSReact.CanvasJS;
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const Summary = props => {
   const [countries, setCountries] = useState([]);
+  const [stats, setStats] = useState({});
   const [search, setSearch] = useState("");
 
   useEffect(() => {
@@ -18,13 +22,66 @@ const Summary = props => {
             : country
         );
         setCountries(data);
+        setStats({
+          total: data.reduce((acc, item) => (acc += item.TotalConfirmed), 0),
+          active:
+            data.reduce((acc, item) => (acc += item.TotalConfirmed), 0) -
+            data.reduce((acc, item) => (acc += item.TotalRecovered), 0) -
+            data.reduce((acc, item) => (acc += item.TotalDeaths), 0),
+          recovered: data.reduce(
+            (acc, item) => (acc += item.TotalRecovered),
+            0
+          ),
+          deaths: data.reduce((acc, item) => (acc += item.TotalDeaths), 0)
+        });
       })
       .catch(err => console.log(err));
   }, []);
-  console.log({ search });
+
+  const options = {
+    exportEnabled: true,
+    animationEnabled: true,
+    title: {
+      text: ""
+    },
+    data: [
+      {
+        type: "pie",
+        startAngle: 75,
+        toolTipContent: "<b>{label}</b>: {y}",
+        showInLegend: "true",
+        legendText: "{label}",
+        indexLabelFontSize: 16,
+        indexLabel: "{label} - {y}",
+        dataPoints: [
+          {
+            label: "Aktif Tanılar",
+            y: stats.active
+          },
+          {
+            label: "İyileşenler",
+            y: stats.recovered
+          },
+          {
+            label: "Ölümler",
+            y: stats.deaths
+          }
+        ]
+      }
+    ]
+  };
+  console.log(stats);
+
   return (
     <div>
-      <h1>COVID-19 Ülke Bazında İstatistikler</h1>
+      <div style={{ marginBottom: 50 }}>
+        <h1>COVID-19 Dünya Geneli Toplam İstatistikler</h1>
+        <CanvasJSChart
+          options={options}
+          /* onRef={ref => this.chart = ref} */
+        />
+      </div>
+      <h1>Ülke Bazında İstatistikler</h1>
       <div className="search">
         <input
           placeholder="ülkelerde ara"
