@@ -75,6 +75,8 @@ const Summary = props => {
   };
   console.log(countries);
 
+  const sortCountries = columnName => {};
+
   return (
     <div>
       <div style={{ marginBottom: 50 }}>
@@ -103,15 +105,7 @@ const Summary = props => {
             }}
           >
             <th>Ülke</th>
-            <th
-              onClick={() =>
-                setCountries(
-                  countries.sort((a, b) => b.NewConfirmed - a.NewConfirmed)
-                )
-              }
-            >
-              Yeni Tanılar
-            </th>
+            <th onClick={() => sortCountries("NewConfirmed")}>Yeni Tanılar</th>
             <th>Toplam Tanılar</th>
             <th>Yeni Ölümler</th>
             <th>Toplam Ölümler</th>
