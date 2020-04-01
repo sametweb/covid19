@@ -8,12 +8,17 @@ table {
   width: 100%;
 }
 
-th {
-  font-size: 1.4rem;
-}
-
 th.sort {
   cursor: pointer;
+}
+
+th {
+  font-size: 1.3rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #333;
+  color: white;
 }
 
 td {

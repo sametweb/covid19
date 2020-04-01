@@ -108,83 +108,20 @@ const Summary = props => {
         />
         <button onClick={() => setSearch("")}>Temizle</button>
       </div>
-      <table>
-        <tbody>
-          <tr
-            style={{
-              backgroundColor: "#333",
-              color: "white",
-              height: 30
-            }}
-          >
+      <table style={{ position: "relative" }}>
+        <thead>
+          {/* prettier-ignore */}
+          <tr style={{ height: 30 }} >
             <th>Ülke</th>
-            <th className="sort" onClick={() => sortCountries("NewConfirmed")}>
-              {sort.by !== "NewConfirmed" ? (
-                <i class="fa fa-sort"></i>
-              ) : sort.order === "desc" ? (
-                <i class="fa fa-sort-down"></i>
-              ) : (
-                <i class="fa fa-sort-up"></i>
-              )}{" "}
-              Yeni Tanılar
-            </th>
-            <th
-              className="sort"
-              onClick={() => sortCountries("TotalConfirmed")}
-            >
-              {sort.by !== "TotalConfirmed" ? (
-                <i class="fa fa-sort"></i>
-              ) : sort.order === "desc" ? (
-                <i class="fa fa-sort-down"></i>
-              ) : (
-                <i class="fa fa-sort-up"></i>
-              )}{" "}
-              Toplam Tanılar
-            </th>
-            <th className="sort" onClick={() => sortCountries("NewDeaths")}>
-              {sort.by !== "NewDeaths" ? (
-                <i class="fa fa-sort"></i>
-              ) : sort.order === "desc" ? (
-                <i class="fa fa-sort-down"></i>
-              ) : (
-                <i class="fa fa-sort-up"></i>
-              )}{" "}
-              Yeni Ölümler
-            </th>
-            <th className="sort" onClick={() => sortCountries("TotalDeaths")}>
-              {sort.by !== "TotalDeaths" ? (
-                <i class="fa fa-sort"></i>
-              ) : sort.order === "desc" ? (
-                <i class="fa fa-sort-down"></i>
-              ) : (
-                <i class="fa fa-sort-up"></i>
-              )}{" "}
-              Toplam Ölümler
-            </th>
-            <th className="sort" onClick={() => sortCountries("NewRecovered")}>
-              {sort.by !== "NewRecovered" ? (
-                <i class="fa fa-sort"></i>
-              ) : sort.order === "desc" ? (
-                <i class="fa fa-sort-down"></i>
-              ) : (
-                <i class="fa fa-sort-up"></i>
-              )}{" "}
-              Yeni İyileşenler
-            </th>
-            <th
-              className="sort"
-              onClick={() => sortCountries("TotalRecovered")}
-            >
-              {sort.by !== "TotalRecovered" ? (
-                <i class="fa fa-sort"></i>
-              ) : sort.order === "desc" ? (
-                <i class="fa fa-sort-down"></i>
-              ) : (
-                <i class="fa fa-sort-up"></i>
-              )}{" "}
-              Toplam İyileşenler
-            </th>
+            <RenderColumnHeader sort={sort} columnName={"NewConfirmed"} title="Yeni Tanılar" sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalConfirmed"} title="Toplam Tanılar" sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"NewDeaths"} title="Yeni Ölümler" sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalDeaths"} title="Toplam Ölümler" sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"NewRecovered"} title="Yeni İyileşenler" sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalRecovered"} title="Toplam İyileşenler" sortCountries={sortCountries} />
           </tr>
+        </thead>
+        <tbody>
           {countries
             .filter(({ Country }) =>
               Country.toLowerCase().includes(search.toLowerCase())
@@ -229,6 +166,21 @@ const Summary = props => {
         </tbody>
       </table>
     </div>
+  );
+};
+
+const RenderColumnHeader = ({ sort, columnName, title, sortCountries }) => {
+  return (
+    <th className="sort" onClick={() => sortCountries(columnName)}>
+      {sort.by !== columnName ? (
+        <i className="fa fa-sort"></i>
+      ) : sort.order === "desc" ? (
+        <i className="fa fa-sort-down"></i>
+      ) : (
+        <i className="fa fa-sort-up"></i>
+      )}{" "}
+      {title}
+    </th>
   );
 };
 
