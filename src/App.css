@@ -12,6 +12,10 @@ th {
   font-size: 1.4rem;
 }
 
+th.sort {
+  cursor: pointer;
+}
+
 td {
   font-size: 1.3rem;
   padding: 3px 0;

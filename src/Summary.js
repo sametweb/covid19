@@ -9,6 +9,7 @@ const Summary = props => {
   const [countries, setCountries] = useState([]);
   const [stats, setStats] = useState({});
   const [search, setSearch] = useState("");
+  const [sort, setSort] = useState({ by: "", order: "" });
 
   useEffect(() => {
     axios
@@ -75,7 +76,19 @@ const Summary = props => {
   };
   console.log(countries);
 
-  const sortCountries = columnName => {};
+  const sortCountries = columnName => {
+    setSort({ by: columnName, order: sort.order === "desc" ? "asc" : "desc" });
+  };
+
+  useEffect(() => {
+    setCountries([
+      ...countries.sort((a, b) =>
+        sort.order === "desc"
+          ? b[sort.by] - a[sort.by]
+          : a[sort.by] - b[sort.by]
+      )
+    ]);
+  }, [sort.by, sort.order]);
 
   return (
     <div>
@@ -105,12 +118,72 @@ const Summary = props => {
             }}
           >
             <th>Ülke</th>
-            <th onClick={() => sortCountries("NewConfirmed")}>Yeni Tanılar</th>
-            <th>Toplam Tanılar</th>
-            <th>Yeni Ölümler</th>
-            <th>Toplam Ölümler</th>
-            <th>Yeni İyileşenler</th>
-            <th>Toplam İyileşenler</th>
+            <th className="sort" onClick={() => sortCountries("NewConfirmed")}>
+              {sort.by !== "NewConfirmed" ? (
+                <i class="fa fa-sort"></i>
+              ) : sort.order === "desc" ? (
+                <i class="fa fa-sort-down"></i>
+              ) : (
+                <i class="fa fa-sort-up"></i>
+              )}{" "}
+              Yeni Tanılar
+            </th>
+            <th
+              className="sort"
+              onClick={() => sortCountries("TotalConfirmed")}
+            >
+              {sort.by !== "TotalConfirmed" ? (
+                <i class="fa fa-sort"></i>
+              ) : sort.order === "desc" ? (
+                <i class="fa fa-sort-down"></i>
+              ) : (
+                <i class="fa fa-sort-up"></i>
+              )}{" "}
+              Toplam Tanılar
+            </th>
+            <th className="sort" onClick={() => sortCountries("NewDeaths")}>
+              {sort.by !== "NewDeaths" ? (
+                <i class="fa fa-sort"></i>
+              ) : sort.order === "desc" ? (
+                <i class="fa fa-sort-down"></i>
+              ) : (
+                <i class="fa fa-sort-up"></i>
+              )}{" "}
+              Yeni Ölümler
+            </th>
+            <th className="sort" onClick={() => sortCountries("TotalDeaths")}>
+              {sort.by !== "TotalDeaths" ? (
+                <i class="fa fa-sort"></i>
+              ) : sort.order === "desc" ? (
+                <i class="fa fa-sort-down"></i>
+              ) : (
+                <i class="fa fa-sort-up"></i>
+              )}{" "}
+              Toplam Ölümler
+            </th>
+            <th className="sort" onClick={() => sortCountries("NewRecovered")}>
+              {sort.by !== "NewRecovered" ? (
+                <i class="fa fa-sort"></i>
+              ) : sort.order === "desc" ? (
+                <i class="fa fa-sort-down"></i>
+              ) : (
+                <i class="fa fa-sort-up"></i>
+              )}{" "}
+              Yeni İyileşenler
+            </th>
+            <th
+              className="sort"
+              onClick={() => sortCountries("TotalRecovered")}
+            >
+              {sort.by !== "TotalRecovered" ? (
+                <i class="fa fa-sort"></i>
+              ) : sort.order === "desc" ? (
+                <i class="fa fa-sort-down"></i>
+              ) : (
+                <i class="fa fa-sort-up"></i>
+              )}{" "}
+              Toplam İyileşenler
+            </th>
           </tr>
           {countries
             .filter(({ Country }) =>
@@ -138,8 +211,14 @@ const Summary = props => {
                       : country.NewDeaths}
                   </td>
                   <td>{country.TotalDeaths}</td>
-                  <td style={country.NewRecovered ? { color: "green" } : {}}>
-                    {country.NewRecovered
+                  <td
+                    style={
+                      country.NewRecovered && country.NewRecovered > 0
+                        ? { color: "green" }
+                        : {}
+                    }
+                  >
+                    {country.NewRecovered && country.NewRecovered > 0
                       ? `+${country.NewRecovered}`
                       : country.NewRecovered}
                   </td>
