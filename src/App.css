@@ -7,11 +7,9 @@
 table {
   width: 100%;
 }
-
-th.sort {
-  cursor: pointer;
+.country:hover {
+  background: #e1e1e2 !important;
 }
-
 th {
   font-size: 1.3rem;
   position: sticky;
@@ -20,12 +18,28 @@ th {
   background: #333;
   color: white;
 }
-
+th.sort {
+  cursor: pointer;
+  top: 32px;
+}
 td {
   font-size: 1.3rem;
   padding: 3px 0;
 }
 
+.countryName {
+  font-size: 1.6rem;
+}
+
+td.countryName a {
+  text-decoration: none;
+  color: royalblue;
+  font-weight: bold;
+}
+
+td.countryName a:hover {
+  text-decoration: underline;
+}
 .search {
   margin-bottom: 3rem;
 }

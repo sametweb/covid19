@@ -112,14 +112,13 @@ const Summary = props => {
       <table style={{ position: "relative" }}>
         <thead>
           <tr style={{ height: 30 }}>
-            <th></th>
+            <th rowSpan={2}>Ülke</th>
             <th colSpan={2}>Teşhisler</th>
             <th colSpan={2}>Ölümler</th>
             <th colSpan={2}>İyileşenler</th>
           </tr>
           {/* prettier-ignore */}
           <tr style={{ height: 30 }} >
-            <th>Ülke</th>
             <RenderColumnHeader sort={sort} columnName={"NewConfirmed"} title="Yeni" sortCountries={sortCountries}/>
             <RenderColumnHeader sort={sort} columnName={"TotalConfirmed"} title="Toplam" sortCountries={sortCountries}/>
             <RenderColumnHeader sort={sort} columnName={"NewDeaths"} title="Yeni" sortCountries={sortCountries}/>
@@ -135,8 +134,12 @@ const Summary = props => {
             )
             .map((country, i) => {
               return (
-                <tr key={i} style={i % 2 ? { backgroundColor: "#f1f1f2" } : {}}>
-                  <td>
+                <tr
+                  key={i}
+                  style={i % 2 ? { backgroundColor: "#f1f1f2" } : {}}
+                  className="country"
+                >
+                  <td className="countryName">
                     <Link to={country.Slug}>{country.Country}</Link>
                   </td>
                   <td
