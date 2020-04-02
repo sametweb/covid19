@@ -12,7 +12,7 @@ const CountryDetails = props => {
   const options = {
     animationEnabled: true,
     title: {
-      text: `İlk tanıdan itibaren günlük ${country} COVID-19 istatistikleri`
+      text: `İlk teşhisten itibaren günlük ${country} COVID-19 istatistikleri`
     },
     axisY: {
       title: "Etkilenen insan sayısı",

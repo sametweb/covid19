@@ -16,7 +16,16 @@ const Summary = props => {
       .get("https://api.covid19api.com/summary")
       .then(res => {
         const data = res.data.Countries.filter(
-          country => country.Country && country.TotalConfirmed > 0
+          country =>
+            country.Country &&
+            country.TotalConfirmed > 0 &&
+            !country.Country.includes("Islamic") &&
+            !country.Country.includes("Korea, South") &&
+            !country.Country.includes("Republic of Korea") &&
+            !country.Country.includes("Viet Nam") &&
+            !country.Country.includes("Taiwan*") &&
+            !country.Country.includes("Bahamas, The") &&
+            !country.Country.includes("Gambiya, The")
         ).map(country =>
           country.Country === "US"
             ? { ...country, Country: "United States of America" }
@@ -148,16 +157,16 @@ const Summary = props => {
                     }
                   >
                     {country.NewConfirmed
-                      ? `+${country.NewConfirmed}`
-                      : country.NewConfirmed}
+                      ? `+${country.NewConfirmed.toLocaleString()}`
+                      : country.NewConfirmed.toLocaleString()}
                   </td>
-                  <td>{country.TotalConfirmed}</td>
+                  <td>{country.TotalConfirmed.toLocaleString()}</td>
                   <td style={country.NewDeaths ? { color: "crimson" } : {}}>
                     {country.NewDeaths
-                      ? `+${country.NewDeaths}`
-                      : country.NewDeaths}
+                      ? `+${country.NewDeaths.toLocaleString()}`
+                      : country.NewDeaths.toLocaleString()}
                   </td>
-                  <td>{country.TotalDeaths}</td>
+                  <td>{country.TotalDeaths.toLocaleString()}</td>
                   <td
                     style={
                       country.NewRecovered && country.NewRecovered > 0
@@ -166,10 +175,10 @@ const Summary = props => {
                     }
                   >
                     {country.NewRecovered && country.NewRecovered > 0
-                      ? `+${country.NewRecovered}`
-                      : country.NewRecovered}
+                      ? `+${country.NewRecovered.toLocaleString()}`
+                      : country.NewRecovered.toLocaleString()}
                   </td>
-                  <td>{country.TotalRecovered}</td>
+                  <td>{country.TotalRecovered.toLocaleString()}</td>
                 </tr>
               );
             })}
