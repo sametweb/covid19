@@ -24,7 +24,7 @@ const CountryDetails = props => {
     data: [
       {
         type: "line",
-        name: "Toplam Tanılar",
+        name: "Toplam Teşhisler",
         showInLegend: true,
         color: "royalblue",
         dataPoints: data.map(confirmed => ({

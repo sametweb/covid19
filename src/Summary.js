@@ -56,7 +56,7 @@ const Summary = props => {
         indexLabel: "{label} - {y}",
         dataPoints: [
           {
-            label: "Aktif Tanılar",
+            label: "Aktif Teşhisler",
             y: stats.active,
             color: "royalblue"
           },
@@ -74,7 +74,6 @@ const Summary = props => {
       }
     ]
   };
-  console.log(countries);
 
   const sortCountries = columnName => {
     setSort({ by: columnName, order: sort.order === "desc" ? "asc" : "desc" });
@@ -94,10 +93,12 @@ const Summary = props => {
     <div>
       <div style={{ marginBottom: 50 }}>
         <h1>COVID-19 Dünya Geneli Toplam İstatistikler</h1>
-        <CanvasJSChart
-          options={options}
-          /* onRef={ref => this.chart = ref} */
-        />
+        <div>
+          <CanvasJSChart
+            options={options}
+            /* onRef={ref => this.chart = ref} */
+          />
+        </div>
       </div>
       <h1>Ülke Bazında İstatistikler</h1>
       <div className="search">
@@ -110,15 +111,21 @@ const Summary = props => {
       </div>
       <table style={{ position: "relative" }}>
         <thead>
+          <tr style={{ height: 30 }}>
+            <th></th>
+            <th colSpan={2}>Teşhisler</th>
+            <th colSpan={2}>Ölümler</th>
+            <th colSpan={2}>İyileşenler</th>
+          </tr>
           {/* prettier-ignore */}
           <tr style={{ height: 30 }} >
             <th>Ülke</th>
-            <RenderColumnHeader sort={sort} columnName={"NewConfirmed"} title="Yeni Tanılar" sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"TotalConfirmed"} title="Toplam Tanılar" sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"NewDeaths"} title="Yeni Ölümler" sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"TotalDeaths"} title="Toplam Ölümler" sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"NewRecovered"} title="Yeni İyileşenler" sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"TotalRecovered"} title="Toplam İyileşenler" sortCountries={sortCountries} />
+            <RenderColumnHeader sort={sort} columnName={"NewConfirmed"} title="Yeni" sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalConfirmed"} title="Toplam" sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"NewDeaths"} title="Yeni" sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalDeaths"} title="Toplam" sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"NewRecovered"} title="Yeni" sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalRecovered"} title="Toplam" sortCountries={sortCountries} />
           </tr>
         </thead>
         <tbody>
@@ -171,7 +178,11 @@ const Summary = props => {
 
 const RenderColumnHeader = ({ sort, columnName, title, sortCountries }) => {
   return (
-    <th className="sort" onClick={() => sortCountries(columnName)}>
+    <th
+      className="sort"
+      style={sort.by === columnName ? { background: "darkred" } : {}}
+      onClick={() => sortCountries(columnName)}
+    >
       {sort.by !== columnName ? (
         <i className="fa fa-sort"></i>
       ) : sort.order === "desc" ? (
