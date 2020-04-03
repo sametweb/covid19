@@ -2,6 +2,7 @@
 export const en = {
   Summary: {
     title: "COVID-19 Worldwide Total Statistics",
+    description: 'Daily updated COVID-19 pandemic statistics, browse country by country COVID-19 numbers',
     subtitle: num => `Total ${Number(num).toLocaleString()} people 
         worldwide has been diagnosed with COVID-19.`,
     activeDiagnoses: 'Active Diagnoses',
@@ -16,11 +17,11 @@ export const en = {
     total: 'Total'
   },
   CountryDetails: {
-      chartTitle: (country) => `${country} Daily COVID-19 Statistics Since First Diagnosis`,
+      title: (country) => `${country} Daily COVID-19 Statistics Since First Diagnosis`,
+      description: (country) => `This page shows COVID-19 statistics for ${country}, day by day virus spread, total diagnoses, recovered cases, and deaths.`,
       affectedPeople: 'Affected People',
       totalDiagnoses: 'Total Diagnoses',
       recovered: 'Recovered',
-      deaths: 'Deaths',
-
+      deaths: 'Deaths'
   }
 };

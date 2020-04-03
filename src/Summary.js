@@ -2,19 +2,29 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import CanvasJSReact from "./assets/canvasjs.react";
+import { Helmet } from "react-helmet";
 import lang from "./lang";
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const Summary = props => {
-  const [languageCode, setLanguageCode] = useState(lang.defaultLanguage);
+  const [languageCode, setLanguageCode] = useState(() => {
+    if (!localStorage.getItem("langCode"))
+      localStorage.setItem("langCode", lang.defaultLanguage);
+    return localStorage.getItem("langCode");
+  });
   const [countries, setCountries] = useState([]);
   const [stats, setStats] = useState({});
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState({ by: "", order: "" });
 
   const language = lang[languageCode].Summary;
+
+  const toggleLanguage = code => {
+    localStorage.setItem("langCode", code);
+    setLanguageCode(localStorage.getItem("langCode"));
+  };
 
   useEffect(() => {
     axios
@@ -105,6 +115,10 @@ const Summary = props => {
 
   return (
     <div>
+      <Helmet>
+        <title>{language.title}</title>
+        <meta name="description" content={language.description} />
+      </Helmet>
       <div style={{ marginBottom: 50 }}>
         <header>
           <h1 className="title">{language.title}</h1>
@@ -112,7 +126,7 @@ const Summary = props => {
             {lang.languageList.map(L => (
               <span
                 className={languageCode === L.code ? "selected-language" : ""}
-                onClick={() => setLanguageCode(L.code)}
+                onClick={() => toggleLanguage(L.code)}
               >
                 {L.name}
               </span>
