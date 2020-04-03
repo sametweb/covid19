@@ -1,21 +1,26 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CanvasJSReact from "./assets/canvasjs.react";
+import lang from "./lang";
+
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const CountryDetails = props => {
+  const [languageCode, setLanguageCode] = useState(lang.defaultLanguage);
   const [country, setCountry] = useState("");
   const [data, setData] = useState([]);
   const [total, setTotal] = useState({});
 
+  const language = lang[languageCode].CountryDetails;
+
   const options = {
     animationEnabled: true,
     title: {
-      text: `İlk teşhisten itibaren günlük ${country} COVID-19 istatistikleri`
+      text: language.chartTitle(country)
     },
     axisY: {
-      title: "Etkilenen insan sayısı",
+      title: language.affectedPeople,
       includeZero: false
     },
     toolTip: {
@@ -24,7 +29,7 @@ const CountryDetails = props => {
     data: [
       {
         type: "line",
-        name: "Toplam Teşhisler",
+        name: language.totalDiagnoses,
         showInLegend: true,
         color: "royalblue",
         dataPoints: data.map(confirmed => ({
@@ -34,7 +39,7 @@ const CountryDetails = props => {
       },
       {
         type: "line",
-        name: "İyileşenler",
+        name: language.recovered,
         showInLegend: true,
         color: "limegreen",
         dataPoints: data.map(recovered => ({
@@ -44,7 +49,7 @@ const CountryDetails = props => {
       },
       {
         type: "line",
-        name: "Ölümler",
+        name: language.deaths,
         showInLegend: true,
         color: "orangered",
         dataPoints: data.map(deaths => ({

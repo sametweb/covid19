@@ -2,14 +2,19 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import CanvasJSReact from "./assets/canvasjs.react";
+import lang from "./lang";
+
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const Summary = props => {
+  const [languageCode, setLanguageCode] = useState(lang.defaultLanguage);
   const [countries, setCountries] = useState([]);
   const [stats, setStats] = useState({});
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState({ by: "", order: "" });
+
+  const language = lang[languageCode].Summary;
 
   useEffect(() => {
     axios
@@ -25,7 +30,7 @@ const Summary = props => {
             !country.Country.includes("Viet Nam") &&
             !country.Country.includes("Taiwan*") &&
             !country.Country.includes("Bahamas, The") &&
-            !country.Country.includes("Gambiya, The")
+            !country.Country.includes("Gambia, The")
         ).map(country =>
           country.Country === "US"
             ? { ...country, Country: "United States of America" }
@@ -65,17 +70,17 @@ const Summary = props => {
         indexLabel: "{label} - {y}",
         dataPoints: [
           {
-            label: "Aktif Teşhisler",
+            label: language.activeDiagnoses,
             y: stats.active,
             color: "royalblue"
           },
           {
-            label: "İyileşenler",
+            label: language.recovered,
             y: stats.recovered,
             color: "limegreen"
           },
           {
-            label: "Ölümler",
+            label: language.deaths,
             y: stats.deaths,
             color: "orangered"
           }
@@ -101,11 +106,20 @@ const Summary = props => {
   return (
     <div>
       <div style={{ marginBottom: 50 }}>
-        <h1>COVID-19 Dünya Geneli Toplam İstatistikler</h1>
-        <h2 className="subtitle">
-          Tüm dünyada toplam <u>{Number(stats.total).toLocaleString()}</u>{" "}
-          insana COVID-19 teşhisi konuldu.
-        </h2>
+        <header>
+          <h1 className="title">{language.title}</h1>
+          <div className="lang">
+            {lang.languageList.map(L => (
+              <span
+                className={languageCode === L.code ? "selected-language" : ""}
+                onClick={() => setLanguageCode(L.code)}
+              >
+                {L.name}
+              </span>
+            ))}
+          </div>
+        </header>
+        <h2 className="subtitle">{language.subtitle(stats.total)}</h2>
         <div>
           <CanvasJSChart
             options={options}
@@ -113,31 +127,31 @@ const Summary = props => {
           />
         </div>
       </div>
-      <h1>Ülke Bazında İstatistikler</h1>
+      <h1>{language.statsByCountry}</h1>
       <div className="search">
         <input
-          placeholder="ülkelerde ara"
+          placeholder={language.searchPlaceholder}
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
-        <button onClick={() => setSearch("")}>Temizle</button>
+        <button onClick={() => setSearch("")}>{language.clear}</button>
       </div>
       <table style={{ position: "relative" }}>
         <thead>
           <tr style={{ height: 30 }}>
-            <th rowSpan={2}>Ülke</th>
-            <th colSpan={2}>Teşhisler</th>
-            <th colSpan={2}>Ölümler</th>
-            <th colSpan={2}>İyileşenler</th>
+            <th rowSpan={2}>{language.country}</th>
+            <th colSpan={2}>{language.diagnoses}</th>
+            <th colSpan={2}>{language.deaths}</th>
+            <th colSpan={2}>{language.recovered}</th>
           </tr>
           {/* prettier-ignore */}
           <tr style={{ height: 30 }} >
-            <RenderColumnHeader sort={sort} columnName={"NewConfirmed"} title="Yeni" sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"TotalConfirmed"} title="Toplam" sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"NewDeaths"} title="Yeni" sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"TotalDeaths"} title="Toplam" sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"NewRecovered"} title="Yeni" sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"TotalRecovered"} title="Toplam" sortCountries={sortCountries} />
+            <RenderColumnHeader sort={sort} columnName={"NewConfirmed"} title={language.new} sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalConfirmed"} title={language.total} sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"NewDeaths"} title={language.new} sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalDeaths"} title={language.total} sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"NewRecovered"} title={language.new} sortCountries={sortCountries}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalRecovered"} title={language.total} sortCountries={sortCountries} />
           </tr>
         </thead>
         <tbody>
@@ -188,6 +202,16 @@ const Summary = props => {
             })}
         </tbody>
       </table>
+      <footer>
+        designed and coded by{" "}
+        <a href="https://github.com/sametweb" alt="samet mutevelli">
+          samet mutevelli
+        </a>{" "}
+        | data:{" "}
+        <a href="https://covid19api.com" alt="covid19 api">
+          covid19api.com
+        </a>
+      </footer>
     </div>
   );
 };

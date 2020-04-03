@@ -4,6 +4,35 @@
   width: 900px;
 }
 
+header {
+  display: flex;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 26px;
+}
+
+.lang {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 10%;
+  font-size: 1.2rem;
+}
+
+.lang span {
+  cursor: pointer;
+}
+
+.selected-language {
+  border-radius: 5px;
+  padding: 5px;
+  background-color: #333;
+  color: white;
+  transition: all 0.2s ease-in-out;
+}
+
 .subtitle {
   border: 1px solid darkgoldenrod;
   background-color: tan;
@@ -58,6 +87,11 @@ button {
 
 button {
   border-left: 0;
+}
+
+footer {
+  padding: 20px 0;
+  font-size: 1.2rem;
 }
 
 .App-logo {
