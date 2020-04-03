@@ -18,7 +18,7 @@ const Summary = props => {
   const [stats, setStats] = useState({});
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState({ by: "", order: "" });
-
+  console.log({ countries });
   const language = lang[languageCode].Summary;
 
   const toggleLanguage = code => {
@@ -125,6 +125,7 @@ const Summary = props => {
           <div className="lang">
             {lang.languageList.map(L => (
               <span
+                key={L.code}
                 className={languageCode === L.code ? "selected-language" : ""}
                 onClick={() => toggleLanguage(L.code)}
               >
