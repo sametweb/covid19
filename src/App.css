@@ -4,6 +4,12 @@
   width: 900px;
 }
 
+.subtitle {
+  border: 1px solid darkgoldenrod;
+  background-color: tan;
+  padding: 10px 0;
+}
+
 table {
   width: 100%;
 }

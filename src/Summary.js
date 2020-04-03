@@ -18,7 +18,7 @@ const Summary = props => {
         const data = res.data.Countries.filter(
           country =>
             country.Country &&
-            country.TotalConfirmed > 0 &&
+            country.TotalConfirmed &&
             !country.Country.includes("Islamic") &&
             !country.Country.includes("Korea, South") &&
             !country.Country.includes("Republic of Korea") &&
@@ -102,6 +102,10 @@ const Summary = props => {
     <div>
       <div style={{ marginBottom: 50 }}>
         <h1>COVID-19 Dünya Geneli Toplam İstatistikler</h1>
+        <h2 className="subtitle">
+          Tüm dünyada toplam <u>{Number(stats.total).toLocaleString()}</u>{" "}
+          insana COVID-19 teşhisi konuldu.
+        </h2>
         <div>
           <CanvasJSChart
             options={options}
