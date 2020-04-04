@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import CanvasJSReact from "./assets/canvasjs.react";
+import { PieChart, Pie, Legend, Tooltip, Cell } from "recharts";
 import { Helmet } from "react-helmet";
 import lang from "./lang";
-
-var CanvasJS = CanvasJSReact.CanvasJS;
-var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const Summary = props => {
   const [languageCode, setLanguageCode] = useState(() => {
@@ -14,17 +11,26 @@ const Summary = props => {
       localStorage.setItem("langCode", lang.defaultLanguage);
     return localStorage.getItem("langCode");
   });
+
   const [countries, setCountries] = useState([]);
   const [stats, setStats] = useState({});
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState({ by: "", order: "" });
-  console.log({ countries });
+
   const language = lang[languageCode].Summary;
 
   const toggleLanguage = code => {
     localStorage.setItem("langCode", code);
     setLanguageCode(localStorage.getItem("langCode"));
   };
+
+  const data01 = [
+    { name: language.activeDiagnoses, value: stats.active },
+    { name: language.deaths, value: stats.deaths },
+    { name: language.recovered, value: stats.recovered }
+  ];
+
+  const colors = ["royalblue", "orangered", "limegreen"];
 
   useEffect(() => {
     axios
@@ -63,42 +69,6 @@ const Summary = props => {
       .catch(err => console.log(err));
   }, []);
 
-  const options = {
-    exportEnabled: true,
-    animationEnabled: true,
-    title: {
-      text: ""
-    },
-    data: [
-      {
-        type: "pie",
-        startAngle: 75,
-        toolTipContent: "<b>{label}</b>: {y}",
-        showInLegend: "true",
-        legendText: "{label}",
-        indexLabelFontSize: 16,
-        indexLabel: "{label} - {y}",
-        dataPoints: [
-          {
-            label: language.activeDiagnoses,
-            y: stats.active,
-            color: "royalblue"
-          },
-          {
-            label: language.recovered,
-            y: stats.recovered,
-            color: "limegreen"
-          },
-          {
-            label: language.deaths,
-            y: stats.deaths,
-            color: "orangered"
-          }
-        ]
-      }
-    ]
-  };
-
   const sortCountries = columnName => {
     setSort({ by: columnName, order: sort.order === "desc" ? "asc" : "desc" });
   };
@@ -135,11 +105,22 @@ const Summary = props => {
           </div>
         </header>
         <h2 className="subtitle">{language.subtitle(stats.total)}</h2>
-        <div>
-          <CanvasJSChart
-            options={options}
-            /* onRef={ref => this.chart = ref} */
-          />
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <PieChart width={380} height={250}>
+            <Pie
+              dataKey="value"
+              isAnimationActive
+              data={data01}
+              outerRadius={80}
+              label={entry => `${entry.name}: ${entry.value.toLocaleString()}`}
+            >
+              {data01.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={colors[index]} />
+              ))}
+            </Pie>
+            <Legend />
+          </PieChart>
+          <div></div>
         </div>
       </div>
       <h1>{language.statsByCountry}</h1>
