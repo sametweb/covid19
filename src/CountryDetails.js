@@ -3,6 +3,16 @@ import axios from "axios";
 import CanvasJSReact from "./assets/canvasjs.react";
 import { Helmet } from "react-helmet";
 import lang from "./lang";
+import {
+  AreaChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Area,
+  ResponsiveContainer,
+  Legend
+} from "recharts";
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -15,8 +25,6 @@ const CountryDetails = props => {
   });
   const [country, setCountry] = useState("");
   const [data, setData] = useState([]);
-  const [total, setTotal] = useState({});
-
   const language = lang[languageCode].CountryDetails;
 
   const toggleLanguage = code => {
@@ -116,24 +124,98 @@ const CountryDetails = props => {
   return (
     <div>
       <header>
-        <h1>{language.title(country)}</h1>
+        <h1 className="title">{language.title}</h1>
         <div className="lang">
-          {lang.languageList.map(L => (
-            <span
-              className={languageCode === L.code ? "selected-language" : ""}
-              onClick={() => toggleLanguage(L.code)}
+          <label>
+            {language.language}:
+            <select
+              value={languageCode}
+              onChange={e => toggleLanguage(e.target.value)}
             >
-              {L.name}
-            </span>
-          ))}
+              {lang.languageList.map(L => (
+                <option key={L.code} value={L.code}>
+                  {L.name}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
       </header>
-
       <Helmet>
         <title>{language.title(country)}</title>
         <meta name="description" content={language.description(country)} />
       </Helmet>
-      <CanvasJSChart options={options} />
+      <h3>COVID-19 Spread in {country}</h3>
+      <ResponsiveContainer width="100%" height={200}>
+        <AreaChart
+          width={400}
+          height={250}
+          data={data}
+          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+        >
+          <defs>
+            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+            </linearGradient>
+            <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <XAxis dataKey="date" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Area
+            type="monotone"
+            dataKey="confirmed"
+            stroke="blue"
+            fillOpacity={0.2}
+            fill="skyblue"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+      <h3>Deaths and Recoveries</h3>
+      <ResponsiveContainer width="100%" height={200}>
+        <AreaChart
+          width={400}
+          height={250}
+          data={data}
+          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+        >
+          <defs>
+            <linearGradient id="colorRecovered" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
+            </linearGradient>
+            <linearGradient id="colorDeaths" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
+              <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <XAxis dataKey="date" />
+          <YAxis />
+          <CartesianGrid strokeDasharray="3 3" />
+          <Tooltip />
+          <Area
+            type="monotone"
+            dataKey="recovered"
+            stroke="green"
+            fillOpacity={0.2}
+            fill="lightgreen"
+          />
+          <Area
+            type="monotone"
+            dataKey="deaths"
+            stroke="crimson"
+            fillOpacity={0.1}
+            fill="red"
+          />
+          <Legend />
+        </AreaChart>
+      </ResponsiveContainer>
+      {/* <CanvasJSChart options={options} /> */}
     </div>
   );
 };

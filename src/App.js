@@ -1,7 +1,7 @@
 import React from "react";
 import Summary from "./Summary";
 import CountryDetails from "./CountryDetails";
-import "./App.css";
+import "./App.scss";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 function App() {

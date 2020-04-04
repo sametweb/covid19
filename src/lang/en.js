@@ -5,6 +5,7 @@ export const en = {
     description: 'Daily updated COVID-19 pandemic statistics, browse country by country COVID-19 numbers',
     subtitle: num => `Total ${Number(num).toLocaleString()} people 
         worldwide has been diagnosed with COVID-19.`,
+    language: 'Language',
     activeDiagnoses: 'Active Diagnoses',
     recovered: 'Recovered',
     deaths: 'Deaths',
@@ -22,6 +23,7 @@ export const en = {
       affectedPeople: 'Affected People',
       totalDiagnoses: 'Total Diagnoses',
       recovered: 'Recovered',
-      deaths: 'Deaths'
+      deaths: 'Deaths',
+      language: 'Language'
   }
 };

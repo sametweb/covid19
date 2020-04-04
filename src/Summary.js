@@ -84,64 +84,83 @@ const Summary = props => {
   }, [sort.by, sort.order]);
 
   return (
-    <div>
+    <>
       <Helmet>
         <title>{language.title}</title>
         <meta name="description" content={language.description} />
       </Helmet>
-      <div style={{ marginBottom: 50 }}>
-        <header>
-          <h1 className="title">{language.title}</h1>
-          <div className="lang">
-            {lang.languageList.map(L => (
-              <span
-                key={L.code}
-                className={languageCode === L.code ? "selected-language" : ""}
-                onClick={() => toggleLanguage(L.code)}
-              >
-                {L.name}
-              </span>
-            ))}
-          </div>
-        </header>
-        <h2 className="subtitle">{language.subtitle(stats.total)}</h2>
-        <div style={{ display: "flex", justifyContent: "center" }}>
-          <PieChart width={380} height={250}>
-            <Pie
-              dataKey="value"
-              isAnimationActive
-              data={data01}
-              outerRadius={80}
-              label={entry => `${entry.name}: ${entry.value.toLocaleString()}`}
+      <header>
+        <h1 className="title">{language.title}</h1>
+        <div className="lang">
+          <label>
+            {language.language}:
+            <select
+              value={languageCode}
+              onChange={e => toggleLanguage(e.target.value)}
             >
-              {data01.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={colors[index]} />
+              {lang.languageList.map(L => (
+                <option key={L.code} value={L.code}>
+                  {L.name}
+                </option>
               ))}
-            </Pie>
-            <Legend />
-          </PieChart>
-          <div></div>
+            </select>
+          </label>
         </div>
+        <h2 className="subtitle">{language.subtitle(stats.total)}</h2>
+      </header>
+      <div className="summary-chart">
+        <PieChart width={380} height={250}>
+          <Pie
+            dataKey="value"
+            isAnimationActive
+            data={data01}
+            outerRadius={80}
+            label={entry => `${entry.name}: ${entry.value.toLocaleString()}`}
+          >
+            {data01.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={colors[index]} />
+            ))}
+          </Pie>
+          <Legend />
+        </PieChart>
       </div>
-      <h1>{language.statsByCountry}</h1>
-      <div className="search">
-        <input
-          placeholder={language.searchPlaceholder}
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-        />
-        <button onClick={() => setSearch("")}>{language.clear}</button>
-      </div>
-      <table style={{ position: "relative" }}>
-        <thead>
-          <tr style={{ height: 30 }}>
-            <th rowSpan={2}>{language.country}</th>
-            <th colSpan={2}>{language.diagnoses}</th>
-            <th colSpan={2}>{language.deaths}</th>
-            <th colSpan={2}>{language.recovered}</th>
-          </tr>
-          {/* prettier-ignore */}
-          <tr style={{ height: 30 }} >
+      <div className="country-list">
+        <div className="country-list-header">
+          <h3 className="country-list-title">{language.statsByCountry}</h3>
+          <div className="search">
+            <input
+              placeholder={language.searchPlaceholder}
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            <button onClick={() => setSearch("")}>{language.clear}</button>
+          </div>
+        </div>
+        <table className="country-list-table">
+          <thead>
+            <tr>
+              <th rowSpan={2}>{language.country}</th>
+              <th colSpan={2} className="WideHeader">
+                {language.diagnoses}
+              </th>
+              <th colSpan={2} className="WideHeader">
+                {language.deaths}
+              </th>
+              <th colSpan={2} className="WideHeader">
+                {language.recovered}
+              </th>
+              <th colSpan={1} className="NarrowHeader">
+                {language.diagnoses}
+              </th>
+              <th colSpan={1} className="NarrowHeader">
+                {language.deaths}
+              </th>
+              <th colSpan={1} className="NarrowHeader">
+                {language.recovered}
+              </th>
+            </tr>
+            {/* prettier-ignore */}
+            <tr >
             <RenderColumnHeader sort={sort} columnName={"NewConfirmed"} title={language.new} sortCountries={sortCountries}/>
             <RenderColumnHeader sort={sort} columnName={"TotalConfirmed"} title={language.total} sortCountries={sortCountries}/>
             <RenderColumnHeader sort={sort} columnName={"NewDeaths"} title={language.new} sortCountries={sortCountries}/>
@@ -149,55 +168,54 @@ const Summary = props => {
             <RenderColumnHeader sort={sort} columnName={"NewRecovered"} title={language.new} sortCountries={sortCountries}/>
             <RenderColumnHeader sort={sort} columnName={"TotalRecovered"} title={language.total} sortCountries={sortCountries} />
           </tr>
-        </thead>
-        <tbody>
-          {countries
-            .filter(({ Country }) =>
-              Country.toLowerCase().includes(search.toLowerCase())
-            )
-            .map((country, i) => {
-              return (
-                <tr
-                  key={i}
-                  style={i % 2 ? { backgroundColor: "#f1f1f2" } : {}}
-                  className="country"
-                >
-                  <td className="countryName">
-                    <Link to={country.Slug}>{country.Country}</Link>
-                  </td>
-                  <td
-                    style={
-                      country.NewConfirmed ? { color: "rgb(168, 137, 45)" } : {}
-                    }
+          </thead>
+          <tbody>
+            {countries
+              .filter(({ Country }) =>
+                Country.toLowerCase().includes(search.toLowerCase())
+              )
+              .map((country, i) => {
+                return (
+                  <tr
+                    key={i}
+                    className={`country-table-row${i % 2 ? "-dark" : ""}`}
                   >
-                    {country.NewConfirmed
-                      ? `+${country.NewConfirmed.toLocaleString()}`
-                      : country.NewConfirmed.toLocaleString()}
-                  </td>
-                  <td>{country.TotalConfirmed.toLocaleString()}</td>
-                  <td style={country.NewDeaths ? { color: "crimson" } : {}}>
-                    {country.NewDeaths
-                      ? `+${country.NewDeaths.toLocaleString()}`
-                      : country.NewDeaths.toLocaleString()}
-                  </td>
-                  <td>{country.TotalDeaths.toLocaleString()}</td>
-                  <td
-                    style={
-                      country.NewRecovered && country.NewRecovered > 0
-                        ? { color: "green" }
-                        : {}
-                    }
-                  >
-                    {country.NewRecovered && country.NewRecovered > 0
-                      ? `+${country.NewRecovered.toLocaleString()}`
-                      : country.NewRecovered.toLocaleString()}
-                  </td>
-                  <td>{country.TotalRecovered.toLocaleString()}</td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </table>
+                    <td className="country-name">
+                      <Link to={country.Slug}>{country.Country}</Link>
+                    </td>
+                    <td
+                      className={`${
+                        country.NewConfirmed ? "new-confirmed" : ""
+                      } NewConfirmed`}
+                    >
+                      {country.NewConfirmed ? `+` : ""}
+                      {country.NewConfirmed.toLocaleString()}
+                    </td>
+                    <td>{country.TotalConfirmed.toLocaleString()}</td>
+                    <td
+                      className={`${
+                        country.NewDeaths ? "new-deaths" : ""
+                      } NewDeaths`}
+                    >
+                      {country.NewDeaths ? `+` : ""}
+                      {country.NewDeaths.toLocaleString()}
+                    </td>
+                    <td>{country.TotalDeaths.toLocaleString()}</td>
+                    <td
+                      className={`${
+                        country.NewRecovered > 0 ? "new-recovered" : ""
+                      } NewRecovered`}
+                    >
+                      {country.NewRecovered > 0 ? `+` : ""}
+                      {country.NewRecovered.toLocaleString()}
+                    </td>
+                    <td>{country.TotalRecovered.toLocaleString()}</td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
       <footer>
         designed and coded by{" "}
         <a href="https://github.com/sametweb" alt="samet mutevelli">
@@ -208,14 +226,14 @@ const Summary = props => {
           covid19api.com
         </a>
       </footer>
-    </div>
+    </>
   );
 };
 
 const RenderColumnHeader = ({ sort, columnName, title, sortCountries }) => {
   return (
     <th
-      className="sort"
+      className={`sort ${columnName}`}
       style={sort.by === columnName ? { background: "darkred" } : {}}
       onClick={() => sortCountries(columnName)}
     >
