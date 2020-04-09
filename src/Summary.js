@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { PieChart, Pie, Legend, Tooltip, Cell } from "recharts";
 import { Helmet } from "react-helmet";
 import lang from "./lang";
+import { Pie, Doughnut } from "react-chartjs-2";
 
-const Summary = props => {
+const Summary = (props) => {
   const [languageCode, setLanguageCode] = useState(() => {
     if (!localStorage.getItem("langCode"))
       localStorage.setItem("langCode", lang.defaultLanguage);
@@ -15,73 +15,65 @@ const Summary = props => {
   const [countries, setCountries] = useState([]);
   const [stats, setStats] = useState({});
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState({ by: "", order: "" });
+  const [sort, setSort] = useState({ by: "TotalConfirmed", order: "desc" });
 
   const language = lang[languageCode].Summary;
 
-  const toggleLanguage = code => {
+  const toggleLanguage = (code) => {
     localStorage.setItem("langCode", code);
     setLanguageCode(localStorage.getItem("langCode"));
   };
 
-  const data01 = [
-    { name: language.activeDiagnoses, value: stats.active },
-    { name: language.deaths, value: stats.deaths },
-    { name: language.recovered, value: stats.recovered }
-  ];
-
-  const colors = ["royalblue", "orangered", "limegreen"];
-
   useEffect(() => {
     axios
       .get("https://api.covid19api.com/summary")
-      .then(res => {
-        const data = res.data.Countries.filter(
-          country =>
-            country.Country &&
-            country.TotalConfirmed &&
-            !country.Country.includes("Islamic") &&
-            !country.Country.includes("Korea, South") &&
-            !country.Country.includes("Republic of Korea") &&
-            !country.Country.includes("Viet Nam") &&
-            !country.Country.includes("Taiwan*") &&
-            !country.Country.includes("Bahamas, The") &&
-            !country.Country.includes("Gambia, The")
-        ).map(country =>
-          country.Country === "US"
-            ? { ...country, Country: "United States of America" }
-            : country
-        );
-        setCountries(data);
-        setStats({
-          total: data.reduce((acc, item) => (acc += item.TotalConfirmed), 0),
-          active:
-            data.reduce((acc, item) => (acc += item.TotalConfirmed), 0) -
-            data.reduce((acc, item) => (acc += item.TotalRecovered), 0) -
-            data.reduce((acc, item) => (acc += item.TotalDeaths), 0),
-          recovered: data.reduce(
-            (acc, item) => (acc += item.TotalRecovered),
-            0
-          ),
-          deaths: data.reduce((acc, item) => (acc += item.TotalDeaths), 0)
-        });
+      .then((res) => {
+        sortCountryList(res.data.Countries, "desc", "TotalConfirmed");
+        setStats(res.data.Global);
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }, []);
 
-  const sortCountries = columnName => {
+  const handleSort = (columnName) => {
     setSort({ by: columnName, order: sort.order === "desc" ? "asc" : "desc" });
   };
 
-  useEffect(() => {
+  const sortCountryList = (countries, order, by) =>
     setCountries([
       ...countries.sort((a, b) =>
-        sort.order === "desc"
-          ? b[sort.by] - a[sort.by]
-          : a[sort.by] - b[sort.by]
-      )
+        order === "desc" ? b[by] - a[by] : a[by] - b[by]
+      ),
     ]);
+
+  const addComma = (num) => Number(num).toLocaleString();
+
+  useEffect(() => {
+    sortCountryList(countries, sort.order, sort.by);
   }, [sort.by, sort.order]);
+
+  const pieData = {
+    labels: ["Active", "Recovered", "Deaths"],
+    datasets: [
+      {
+        label: "Case Distribution",
+        backgroundColor: [
+          "rgba(48, 105, 167, 0.3)",
+          "rgba(78, 167, 48, 0.3)",
+          "rgba(167, 48, 48, 0.3)",
+        ],
+        hoverBackgroundColor: [
+          "rgba(48, 105, 167, 0.5)",
+          "rgba(78, 167, 48, 0.5)",
+          "rgba(167, 48, 48, 0.5)",
+        ],
+        data: [
+          stats.TotalConfirmed - stats.TotalRecovered - stats.TotalDeaths,
+          stats.TotalRecovered,
+          stats.TotalDeaths,
+        ],
+      },
+    ],
+  };
 
   return (
     <>
@@ -96,9 +88,9 @@ const Summary = props => {
             {language.language}:
             <select
               value={languageCode}
-              onChange={e => toggleLanguage(e.target.value)}
+              onChange={(e) => toggleLanguage(e.target.value)}
             >
-              {lang.languageList.map(L => (
+              {lang.languageList.map((L) => (
                 <option key={L.code} value={L.code}>
                   {L.name}
                 </option>
@@ -106,24 +98,61 @@ const Summary = props => {
             </select>
           </label>
         </div>
-        <h2 className="subtitle">{language.subtitle(stats.total)}</h2>
       </header>
-      <div className="summary-chart">
-        <PieChart width={380} height={250}>
-          <Pie
-            dataKey="value"
-            isAnimationActive
-            data={data01}
-            outerRadius={80}
-            label={entry => `${entry.name}: ${entry.value.toLocaleString()}`}
-          >
-            {data01.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={colors[index]} />
-            ))}
-          </Pie>
-          <Legend />
-        </PieChart>
-      </div>
+      <section className="summary">
+        <div className="summary-header">
+          Total Cases:{" "}
+          {!stats.TotalConfirmed ? "..." : addComma(stats.TotalConfirmed)}
+        </div>
+        <div className="summary-body">
+          <div className="summary-item active">
+            <p>Total Active Cases</p>
+            <p>
+              {!stats.TotalConfirmed
+                ? "..."
+                : addComma(
+                    stats.TotalConfirmed -
+                      stats.TotalDeaths -
+                      stats.TotalRecovered
+                  )}
+            </p>
+          </div>
+          <div className="summary-item recovered">
+            <p>Total Recovered Cases</p>
+            <p>
+              {!stats.TotalRecovered ? "..." : addComma(stats.TotalRecovered)}
+            </p>
+          </div>
+          <div className="summary-item deaths">
+            <p>Total Deaths</p>
+            <p>{!stats.TotalDeaths ? "..." : addComma(stats.TotalDeaths)}</p>
+          </div>
+        </div>
+        <div className="summary-chart">
+          <Doughnut
+            data={pieData}
+            options={{
+              title: {
+                display: true,
+                text: "Total Case Distribution",
+                fontSize: 20,
+              },
+              legend: {
+                display: false,
+                position: "right",
+              },
+              tooltips: {
+                callbacks: {
+                  label: (a, b) =>
+                    `${b.labels[a.index]}: ${addComma(
+                      b.datasets[0].data[a.index]
+                    )}`,
+                },
+              },
+            }}
+          />
+        </div>
+      </section>
       <div className="country-list">
         <div className="country-list-header">
           <h3 className="country-list-title">{language.statsByCountry}</h3>
@@ -131,7 +160,7 @@ const Summary = props => {
             <input
               placeholder={language.searchPlaceholder}
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
             />
             <button onClick={() => setSearch("")}>{language.clear}</button>
           </div>
@@ -161,12 +190,12 @@ const Summary = props => {
             </tr>
             {/* prettier-ignore */}
             <tr >
-            <RenderColumnHeader sort={sort} columnName={"NewConfirmed"} title={language.new} sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"TotalConfirmed"} title={language.total} sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"NewDeaths"} title={language.new} sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"TotalDeaths"} title={language.total} sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"NewRecovered"} title={language.new} sortCountries={sortCountries}/>
-            <RenderColumnHeader sort={sort} columnName={"TotalRecovered"} title={language.total} sortCountries={sortCountries} />
+            <RenderColumnHeader sort={sort} columnName={"NewConfirmed"} title={language.new} handleSort={handleSort}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalConfirmed"} title={language.total} handleSort={handleSort}/>
+            <RenderColumnHeader sort={sort} columnName={"NewDeaths"} title={language.new} handleSort={handleSort}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalDeaths"} title={language.total} handleSort={handleSort}/>
+            <RenderColumnHeader sort={sort} columnName={"NewRecovered"} title={language.new} handleSort={handleSort}/>
+            <RenderColumnHeader sort={sort} columnName={"TotalRecovered"} title={language.total} handleSort={handleSort} />
           </tr>
           </thead>
           <tbody>
@@ -230,12 +259,12 @@ const Summary = props => {
   );
 };
 
-const RenderColumnHeader = ({ sort, columnName, title, sortCountries }) => {
+const RenderColumnHeader = ({ sort, columnName, title, handleSort }) => {
   return (
     <th
       className={`sort ${columnName}`}
       style={sort.by === columnName ? { background: "darkred" } : {}}
-      onClick={() => sortCountries(columnName)}
+      onClick={() => handleSort(columnName)}
     >
       {sort.by !== columnName ? (
         <i className="fa fa-sort"></i>
