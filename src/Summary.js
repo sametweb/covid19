@@ -3,9 +3,12 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import lang from "./lang";
-import { Pie, Doughnut } from "react-chartjs-2";
+import { Doughnut } from "react-chartjs-2";
+import Header from "./Header";
 
-const Summary = (props) => {
+export const addComma = (num) => Number(num).toLocaleString();
+
+const Summary = () => {
   const [languageCode, setLanguageCode] = useState(() => {
     if (!localStorage.getItem("langCode"))
       localStorage.setItem("langCode", lang.defaultLanguage);
@@ -45,17 +48,14 @@ const Summary = (props) => {
       ),
     ]);
 
-  const addComma = (num) => Number(num).toLocaleString();
-
   useEffect(() => {
     sortCountryList(countries, sort.order, sort.by);
   }, [sort.by, sort.order]);
 
   const pieData = {
-    labels: ["Active", "Recovered", "Deaths"],
+    labels: [language.active, language.recovered, language.deaths],
     datasets: [
       {
-        label: "Case Distribution",
         backgroundColor: [
           "rgba(48, 105, 167, 0.3)",
           "rgba(78, 167, 48, 0.3)",
@@ -81,32 +81,20 @@ const Summary = (props) => {
         <title>{language.title}</title>
         <meta name="description" content={language.description} />
       </Helmet>
-      <header>
-        <h1 className="title">{language.title}</h1>
-        <div className="lang">
-          <label>
-            {language.language}:
-            <select
-              value={languageCode}
-              onChange={(e) => toggleLanguage(e.target.value)}
-            >
-              {lang.languageList.map((L) => (
-                <option key={L.code} value={L.code}>
-                  {L.name}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </header>
+      <Header
+        language={language}
+        toggleLanguage={toggleLanguage}
+        languageCode={languageCode}
+        lang={lang}
+      />
       <section className="summary">
         <div className="summary-header">
-          Total Cases:{" "}
+          {language.totalCases}:{" "}
           {!stats.TotalConfirmed ? "..." : addComma(stats.TotalConfirmed)}
         </div>
         <div className="summary-body">
           <div className="summary-item active">
-            <p>Total Active Cases</p>
+            <p>{language.totalActiveCases}</p>
             <p>
               {!stats.TotalConfirmed
                 ? "..."
@@ -118,13 +106,13 @@ const Summary = (props) => {
             </p>
           </div>
           <div className="summary-item recovered">
-            <p>Total Recovered Cases</p>
+            <p>{language.totalRecoveredCases}</p>
             <p>
               {!stats.TotalRecovered ? "..." : addComma(stats.TotalRecovered)}
             </p>
           </div>
           <div className="summary-item deaths">
-            <p>Total Deaths</p>
+            <p>{language.totalDeaths}</p>
             <p>{!stats.TotalDeaths ? "..." : addComma(stats.TotalDeaths)}</p>
           </div>
         </div>
@@ -134,7 +122,7 @@ const Summary = (props) => {
             options={{
               title: {
                 display: true,
-                text: "Total Case Distribution",
+                text: language.totalCaseDistribution,
                 fontSize: 20,
               },
               legend: {
@@ -263,7 +251,9 @@ const RenderColumnHeader = ({ sort, columnName, title, handleSort }) => {
   return (
     <th
       className={`sort ${columnName}`}
-      style={sort.by === columnName ? { background: "darkred" } : {}}
+      style={
+        sort.by === columnName ? { background: "rgba(167, 139, 48, 1)" } : {}
+      }
       onClick={() => handleSort(columnName)}
     >
       {sort.by !== columnName ? (

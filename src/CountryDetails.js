@@ -2,16 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Helmet } from "react-helmet";
 import lang from "./lang";
-import {
-  AreaChart,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Area,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
+import { Line } from "react-chartjs-2";
+import { addComma } from "./Summary";
+import Header from "./Header";
 
 const CountryDetails = (props) => {
   const [languageCode, setLanguageCode] = useState(() => {
@@ -32,13 +25,13 @@ const CountryDetails = (props) => {
 
   const getData = (country) => {
     const confirmedRequest = axios.get(
-      `https://api.covid19api.com/total/dayone/country/${country}/status/confirmed`
+      `https://api.covid19api.com/total/country/${country}/status/confirmed`
     );
     const recoveredRequest = axios.get(
-      `https://api.covid19api.com/total/dayone/country/${country}/status/recovered`
+      `https://api.covid19api.com/total/country/${country}/status/recovered`
     );
     const deathsRequest = axios.get(
-      `https://api.covid19api.com/total/dayone/country/${country}/status/deaths`
+      `https://api.covid19api.com/total/country/${country}/status/deaths`
     );
 
     axios.all([confirmedRequest, recoveredRequest, deathsRequest]).then(
@@ -73,99 +66,121 @@ const CountryDetails = (props) => {
 
   return (
     <div>
-      <header>
-        <h1 className="title">{language.title}</h1>
-        <div className="lang">
-          <label>
-            {language.language}:
-            <select
-              value={languageCode}
-              onChange={(e) => toggleLanguage(e.target.value)}
-            >
-              {lang.languageList.map((L) => (
-                <option key={L.code} value={L.code}>
-                  {L.name}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </header>
+      <Header
+        language={language}
+        toggleLanguage={toggleLanguage}
+        languageCode={languageCode}
+        lang={lang}
+      />
+
       <Helmet>
-        <title>{language.title(country)}</title>
+        <title>{language.title}</title>
         <meta name="description" content={language.description(country)} />
       </Helmet>
-      <h3>COVID-19 Spread in {country}</h3>
-      <ResponsiveContainer width="100%" height={200}>
-        <AreaChart
-          width={400}
-          height={250}
-          data={data}
-          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-        >
-          <defs>
-            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-            </linearGradient>
-            <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <XAxis dataKey="date" />
-          <YAxis />
-          <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip />
-          <Area
-            type="monotone"
-            dataKey="confirmed"
-            stroke="blue"
-            fillOpacity={0.2}
-            fill="skyblue"
-          />
-        </AreaChart>
-      </ResponsiveContainer>
-      <h3>Deaths and Recoveries</h3>
-      <ResponsiveContainer width="100%" height={200}>
-        <AreaChart
-          width={400}
-          height={250}
-          data={data}
-          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-        >
-          <defs>
-            <linearGradient id="colorRecovered" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#8884d8" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#8884d8" stopOpacity={0} />
-            </linearGradient>
-            <linearGradient id="colorDeaths" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#82ca9d" stopOpacity={0.8} />
-              <stop offset="95%" stopColor="#82ca9d" stopOpacity={0} />
-            </linearGradient>
-          </defs>
-          <XAxis dataKey="date" />
-          <YAxis />
-          <CartesianGrid strokeDasharray="3 3" />
-          <Tooltip />
-          <Area
-            type="monotone"
-            dataKey="recovered"
-            stroke="green"
-            fillOpacity={0.2}
-            fill="lightgreen"
-          />
-          <Area
-            type="monotone"
-            dataKey="deaths"
-            stroke="crimson"
-            fillOpacity={0.1}
-            fill="red"
-          />
-          <Legend />
-        </AreaChart>
-      </ResponsiveContainer>
-      {/* <CanvasJSChart options={options} /> */}
+      <Line
+        data={{
+          labels: data.map((a) => a.date),
+          datasets: [
+            {
+              label: language.totalDiagnoses,
+              data: data.map((a) => a.confirmed),
+              backgroundColor: ["rgba(48, 105, 167, 0.3)"],
+              borderColor: ["rgba(48, 105, 167, 0.7)"],
+              borderWidth: 1,
+              pointRadius: 1,
+              pointHoverRadius: 4,
+              pointBackgroundColor: "rgba(48, 105, 167, 0.5)",
+            },
+          ],
+        }}
+        options={{
+          title: {
+            display: true,
+            text: language.dailySpread,
+            fontSize: 20,
+          },
+          legend: {
+            display: true,
+            position: "top",
+          },
+          tooltips: {
+            callbacks: {
+              title: (a, b) => b.datasets[a[0].datasetIndex].label,
+              label: (a, b) =>
+                `${b.labels[a.index]}: ${addComma(
+                  b.datasets[0].data[a.index]
+                )}`,
+            },
+          },
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                  callback: (value, index, values) => addComma(value),
+                },
+              },
+            ],
+          },
+        }}
+      />
+      <Line
+        data={{
+          labels: data.map((a) => a.date),
+          datasets: [
+            {
+              label: language.recovered,
+              data: data.map((a) => a.recovered),
+              backgroundColor: ["rgba(78, 167, 48, 0.3)"],
+              borderColor: ["rgba(78, 167, 48, 0.7)"],
+              borderWidth: 1,
+              pointRadius: 1,
+              pointHoverRadius: 4,
+              pointBackgroundColor: "rgba(78, 167, 48, 0.5)",
+            },
+            {
+              label: language.deaths,
+              data: data.map((a) => a.deaths),
+              backgroundColor: ["rgba(167, 48, 48, 0.3)"],
+              borderColor: ["rgba(167, 48, 48, 0.7)"],
+              borderWidth: 1,
+              pointRadius: 1,
+              pointHoverRadius: 4,
+              pointBackgroundColor: "rgba(167, 48, 48, 0.5)",
+            },
+          ],
+        }}
+        options={{
+          title: {
+            display: true,
+            text: language.dailyRecoveriesAndDeaths,
+            fontSize: 20,
+          },
+          legend: {
+            display: true,
+            position: "top",
+          },
+          tooltips: {
+            callbacks: {
+              title: (a, b) => b.datasets[a[0].datasetIndex].label,
+              label: (a, b) =>
+                `${b.labels[a.index]}: ${addComma(
+                  b.datasets[0].data[a.index]
+                )}`,
+            },
+          },
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                  callback: (value, index, values) => addComma(value),
+                },
+              },
+            ],
+          },
+        }}
+      />
     </div>
   );
 };

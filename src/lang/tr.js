@@ -1,9 +1,14 @@
 //prettier-ignore
 export const tr = {
     Summary: {
-      title: "Dünya Geneli Toplam COVID-19 İstatistikleri",
+      title: "COVID19Daily.info",
       description: 'Günlük güncellenen COVID-19 salgını istatistikleri, ülke bazlı COVID-19 rakamlarını görüntüleyin',
-      activeDiagnoses: 'Aktif Teşhisler',
+      totalCases: 'Toplam Teşhisler',
+      totalActiveCases: 'Toplam Aktif Teşhis Sayısı',
+      totalRecoveredCases: 'Toplam İyileşen Sayısı',
+      totalDeaths: 'Toplam Ölüm Sayısı',
+      totalCaseDistribution: 'Toplam Teşhis Dağılımı',
+      active: 'Aktif Teşhisler',
       language: 'Dil',
       recovered: 'İyileşenler',
       deaths: 'Ölümler',
@@ -16,8 +21,10 @@ export const tr = {
       total: 'Toplam'
     },
     CountryDetails: {
-      title: (country) => `İlk Teşhisten İtibaren ${country} Günlük COVID-19 İstatistikleri`,
+      title: `İlk Teşhisten İtibaren Günlük COVID-19 İstatistikleri`,
       description: (country) => `Bu sayfa ${country} için COVID-19 istatistiklerini içerir, gün gün virüsün yayılımı, toplam teşhis sayıları, iyileşenler, ve ölümler.`,
+      dailySpread: 'Günlük Yayılım',
+      dailyRecoveriesAndDeaths: 'Günlük İyileşme ve Ölüm İstatistikleri',
       affectedPeople: 'Etkilenen kişi sayısı',
       totalDiagnoses: 'Toplam Teşhisler',
       recovered: 'İyileşenler',
