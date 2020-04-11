@@ -53,6 +53,17 @@ html {
     }
   }
 
+  .single-country-header {
+    background-color: #f8f2d9;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h2 {
+      margin: 0;
+    }
+  }
+
   .country-list {
     .country-list-header {
       display: flex;

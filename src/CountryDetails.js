@@ -14,7 +14,7 @@ const CountryDetails = (props) => {
   });
   const [country, setCountry] = useState("");
   const [data, setData] = useState([]);
-  const language = lang[languageCode].CountryDetails;
+  const language = lang[languageCode];
 
   const toggleLanguage = (code) => {
     localStorage.setItem("langCode", code);
@@ -74,9 +74,20 @@ const CountryDetails = (props) => {
       />
 
       <Helmet>
-        <title>{language.title}</title>
+        <title>{language.singleCountryTitle}</title>
         <meta name="description" content={language.description(country)} />
       </Helmet>
+      <div className="single-country-header">
+        <h2>{country}</h2>
+        <label htmlFor="countryToCompare">
+          {language.compareTo}
+          <select id="countryToCompare">
+            <option>United States of America</option>
+            <option>Turkey</option>
+            <option>United Kingdom</option>
+          </select>
+        </label>
+      </div>
       <Line
         data={{
           labels: data.map((a) => a.date),
@@ -124,63 +135,98 @@ const CountryDetails = (props) => {
           },
         }}
       />
-      <Line
-        data={{
-          labels: data.map((a) => a.date),
-          datasets: [
-            {
-              label: language.recovered,
-              data: data.map((a) => a.recovered),
-              backgroundColor: ["rgba(78, 167, 48, 0.3)"],
-              borderColor: ["rgba(78, 167, 48, 0.7)"],
-              borderWidth: 1,
-              pointRadius: 1,
-              pointHoverRadius: 4,
-              pointBackgroundColor: "rgba(78, 167, 48, 0.5)",
-            },
-            {
-              label: language.deaths,
-              data: data.map((a) => a.deaths),
-              backgroundColor: ["rgba(167, 48, 48, 0.3)"],
-              borderColor: ["rgba(167, 48, 48, 0.7)"],
-              borderWidth: 1,
-              pointRadius: 1,
-              pointHoverRadius: 4,
-              pointBackgroundColor: "rgba(167, 48, 48, 0.5)",
-            },
-          ],
-        }}
-        options={{
-          title: {
-            display: true,
-            text: language.dailyRecoveriesAndDeaths,
-            fontSize: 20,
-          },
-          legend: {
-            display: true,
-            position: "top",
-          },
-          tooltips: {
-            callbacks: {
-              title: (a, b) => b.datasets[a[0].datasetIndex].label,
-              label: (a, b) =>
-                `${b.labels[a.index]}: ${addComma(
-                  b.datasets[0].data[a.index]
-                )}`,
-            },
-          },
-          scales: {
-            yAxes: [
-              {
-                ticks: {
-                  beginAtZero: true,
-                  callback: (value, index, values) => addComma(value),
+      <div style={{ display: "flex", justifyContent: "space-between" }}>
+        <div style={{ width: "49%" }}>
+          <Line
+            data={{
+              labels: data.map((a) => a.date.substr(a.date.length - 5)),
+              datasets: [
+                {
+                  label: language.recovered,
+                  data: data.map((a) => a.recovered),
+                  backgroundColor: ["rgba(78, 167, 48, 0.3)"],
+                  borderColor: ["rgba(78, 167, 48, 0.7)"],
+                  borderWidth: 1,
+                  pointRadius: 1,
+                  pointHoverRadius: 4,
+                  pointBackgroundColor: "rgba(78, 167, 48, 0.5)",
+                },
+              ],
+            }}
+            options={{
+              title: { display: false },
+              legend: {
+                display: true,
+                position: "top",
+              },
+              tooltips: {
+                callbacks: {
+                  title: (a, b) => b.datasets[a[0].datasetIndex].label,
+                  label: (a, b) =>
+                    `${b.labels[a.index]}: ${addComma(
+                      b.datasets[0].data[a.index]
+                    )}`,
                 },
               },
-            ],
-          },
-        }}
-      />
+              scales: {
+                yAxes: [
+                  {
+                    ticks: {
+                      beginAtZero: true,
+                      callback: (value, index, values) => addComma(value),
+                    },
+                  },
+                ],
+              },
+            }}
+          />
+        </div>
+        <div style={{ width: "49%" }}>
+          <Line
+            data={{
+              labels: data.map((a) => a.date.substr(a.date.length - 5)),
+              datasets: [
+                {
+                  label: language.deaths,
+                  data: data.map((a) => a.deaths),
+                  backgroundColor: ["rgba(167, 48, 48, 0.3)"],
+                  borderColor: ["rgba(167, 48, 48, 0.7)"],
+                  borderWidth: 1,
+                  pointRadius: 1,
+                  pointHoverRadius: 4,
+                  pointBackgroundColor: "rgba(167, 48, 48, 0.5)",
+                },
+              ],
+            }}
+            options={{
+              title: { display: false },
+              legend: {
+                display: true,
+                position: "top",
+              },
+              tooltips: {
+                callbacks: {
+                  title: (a, b) => b.datasets[a[0].datasetIndex].label,
+                  label: (a, b) =>
+                    `${b.labels[a.index]}: ${addComma(
+                      b.datasets[0].data[a.index]
+                    )}`,
+                },
+              },
+              scales: {
+                yAxes: [
+                  {
+                    ticks: {
+                      beginAtZero: true,
+                      callback: (value, index, values) => addComma(value),
+                    },
+                  },
+                ],
+              },
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };

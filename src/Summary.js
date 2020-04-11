@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { connect } from "react-redux";
+import { fetchCountries, sortCountries } from "./utils/actions";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import lang from "./lang";
@@ -8,48 +9,35 @@ import Header from "./Header";
 
 export const addComma = (num) => Number(num).toLocaleString();
 
-const Summary = () => {
+const Summary = (props) => {
   const [languageCode, setLanguageCode] = useState(() => {
     if (!localStorage.getItem("langCode"))
       localStorage.setItem("langCode", lang.defaultLanguage);
     return localStorage.getItem("langCode");
   });
-
-  const [countries, setCountries] = useState([]);
-  const [stats, setStats] = useState({});
+  const { stats, countries } = props;
+  console.log({ stats });
+  console.log({ countries });
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState({ by: "TotalConfirmed", order: "desc" });
 
-  const language = lang[languageCode].Summary;
+  const language = lang[languageCode];
 
   const toggleLanguage = (code) => {
     localStorage.setItem("langCode", code);
     setLanguageCode(localStorage.getItem("langCode"));
   };
 
-  useEffect(() => {
-    axios
-      .get("https://api.covid19api.com/summary")
-      .then((res) => {
-        sortCountryList(res.data.Countries, "desc", "TotalConfirmed");
-        setStats(res.data.Global);
-      })
-      .catch((err) => console.log(err));
-  }, []);
-
   const handleSort = (columnName) => {
     setSort({ by: columnName, order: sort.order === "desc" ? "asc" : "desc" });
   };
 
-  const sortCountryList = (countries, order, by) =>
-    setCountries([
-      ...countries.sort((a, b) =>
-        order === "desc" ? b[by] - a[by] : a[by] - b[by]
-      ),
-    ]);
+  useEffect(() => {
+    props.fetchCountries();
+  }, []);
 
   useEffect(() => {
-    sortCountryList(countries, sort.order, sort.by);
+    props.sortCountries(countries, sort.order, sort.by);
   }, [sort.by, sort.order]);
 
   const pieData = {
@@ -187,7 +175,7 @@ const Summary = () => {
           </tr>
           </thead>
           <tbody>
-            {countries
+            {props.countries
               .filter(({ Country }) =>
                 Country.toLowerCase().includes(search.toLowerCase())
               )
@@ -268,4 +256,16 @@ const RenderColumnHeader = ({ sort, columnName, title, handleSort }) => {
   );
 };
 
-export default Summary;
+const mapStateToProps = (state) => {
+  return {
+    loading: state.loading,
+    error: state.error,
+    stats: state.stats,
+    countries: state.countries,
+    languageCode: state.languageCode,
+  };
+};
+
+export default connect(mapStateToProps, { fetchCountries, sortCountries })(
+  Summary
+);

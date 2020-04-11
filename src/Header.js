@@ -3,7 +3,7 @@ import React from "react";
 const Header = ({ language, toggleLanguage, languageCode, lang }) => {
   return (
     <header>
-      <h1 className="title">{language.title}</h1>
+      <h1 className="title">{language.siteTitle}</h1>
       <div className="lang">
         <label>
           {language.language}:
