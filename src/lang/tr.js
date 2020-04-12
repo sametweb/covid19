@@ -19,15 +19,11 @@ export const tr = {
   new: "Yeni",
   total: "Toplam",
   singleCountryTitle: `İlk Teşhisten İtibaren Günlük COVID-19 İstatistikleri`,
-  description: (country) =>
-    `Bu sayfa ${country} için COVID-19 istatistiklerini içerir, gün gün virüsün yayılımı, toplam teşhis sayıları, iyileşenler, ve ölümler.`,
-  dailySpread: "Günlük Yayılım",
+  dailySpread: "Günlük Salgın Yayılımı",
   dailyRecoveries: "Günlük İyileşenler",
   dailyDeaths: "Günlük Ölümler",
   affectedPeople: "Etkilenen kişi sayısı",
   totalDiagnoses: "Toplam Teşhisler",
-  recovered: "İyileşenler",
-  deaths: "Ölümler",
-  language: "Dil",
   compareTo: "Şu ülkeyle karşılaştır:",
+  select: "Ülke seçiniz",
 };

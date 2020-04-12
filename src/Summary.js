@@ -1,80 +1,45 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { connect } from "react-redux";
 import { fetchCountries, sortCountries } from "./utils/actions";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import lang from "./lang";
-import { Doughnut } from "react-chartjs-2";
 import Header from "./Header";
+import HomePieChart from "./HomePieChart";
+import { LanguageContext } from "./App";
 
 export const addComma = (num) => Number(num).toLocaleString();
 
 const Summary = (props) => {
-  const [languageCode, setLanguageCode] = useState(() => {
-    if (!localStorage.getItem("langCode"))
-      localStorage.setItem("langCode", lang.defaultLanguage);
-    return localStorage.getItem("langCode");
-  });
+  const { language } = useContext(LanguageContext);
   const { stats, countries } = props;
-  console.log({ stats });
-  console.log({ countries });
   const [search, setSearch] = useState("");
-  const [sort, setSort] = useState({ by: "TotalConfirmed", order: "desc" });
-
-  const language = lang[languageCode];
-
-  const toggleLanguage = (code) => {
-    localStorage.setItem("langCode", code);
-    setLanguageCode(localStorage.getItem("langCode"));
-  };
+  const [sort, setSort] = useState({
+    firstRender: true,
+    by: "TotalConfirmed",
+    order: "desc",
+  });
 
   const handleSort = (columnName) => {
     setSort({ by: columnName, order: sort.order === "desc" ? "asc" : "desc" });
   };
 
   useEffect(() => {
-    props.fetchCountries();
+    countries.length === 0 && props.fetchCountries();
   }, []);
 
   useEffect(() => {
-    props.sortCountries(countries, sort.order, sort.by);
+    if (!sort.firstRender) {
+      props.sortCountries(countries, sort.order, sort.by);
+    }
   }, [sort.by, sort.order]);
-
-  const pieData = {
-    labels: [language.active, language.recovered, language.deaths],
-    datasets: [
-      {
-        backgroundColor: [
-          "rgba(48, 105, 167, 0.3)",
-          "rgba(78, 167, 48, 0.3)",
-          "rgba(167, 48, 48, 0.3)",
-        ],
-        hoverBackgroundColor: [
-          "rgba(48, 105, 167, 0.5)",
-          "rgba(78, 167, 48, 0.5)",
-          "rgba(167, 48, 48, 0.5)",
-        ],
-        data: [
-          stats.TotalConfirmed - stats.TotalRecovered - stats.TotalDeaths,
-          stats.TotalRecovered,
-          stats.TotalDeaths,
-        ],
-      },
-    ],
-  };
 
   return (
     <>
       <Helmet>
-        <title>{language.title}</title>
+        <title>{language.siteTitle}</title>
         <meta name="description" content={language.description} />
       </Helmet>
-      <Header
-        language={language}
-        toggleLanguage={toggleLanguage}
-        languageCode={languageCode}
-        lang={lang}
-      />
+      <Header />
       <section className="summary">
         <div className="summary-header">
           {language.totalCases}:{" "}
@@ -105,28 +70,7 @@ const Summary = (props) => {
           </div>
         </div>
         <div className="summary-chart">
-          <Doughnut
-            data={pieData}
-            options={{
-              title: {
-                display: true,
-                text: language.totalCaseDistribution,
-                fontSize: 20,
-              },
-              legend: {
-                display: false,
-                position: "right",
-              },
-              tooltips: {
-                callbacks: {
-                  label: (a, b) =>
-                    `${b.labels[a.index]}: ${addComma(
-                      b.datasets[0].data[a.index]
-                    )}`,
-                },
-              },
-            }}
-          />
+          <HomePieChart stats={stats} language={language} addComma={addComma} />
         </div>
       </section>
       <div className="country-list">
@@ -143,29 +87,18 @@ const Summary = (props) => {
         </div>
         <table className="country-list-table">
           <thead>
+            {/*prettier-ignore*/}
             <tr>
               <th rowSpan={2}>{language.country}</th>
-              <th colSpan={2} className="WideHeader">
-                {language.diagnoses}
-              </th>
-              <th colSpan={2} className="WideHeader">
-                {language.deaths}
-              </th>
-              <th colSpan={2} className="WideHeader">
-                {language.recovered}
-              </th>
-              <th colSpan={1} className="NarrowHeader">
-                {language.diagnoses}
-              </th>
-              <th colSpan={1} className="NarrowHeader">
-                {language.deaths}
-              </th>
-              <th colSpan={1} className="NarrowHeader">
-                {language.recovered}
-              </th>
+              <th colSpan={2} className="WideHeader">{language.diagnoses}</th>
+              <th colSpan={2} className="WideHeader">{language.deaths}</th>
+              <th colSpan={2} className="WideHeader">{language.recovered}</th>
+              <th colSpan={1} className="NarrowHeader">{language.diagnoses}</th>
+              <th colSpan={1} className="NarrowHeader">{language.deaths}</th>
+              <th colSpan={1} className="NarrowHeader">{language.recovered}</th>
             </tr>
             {/* prettier-ignore */}
-            <tr >
+            <tr>
             <RenderColumnHeader sort={sort} columnName={"NewConfirmed"} title={language.new} handleSort={handleSort}/>
             <RenderColumnHeader sort={sort} columnName={"TotalConfirmed"} title={language.total} handleSort={handleSort}/>
             <RenderColumnHeader sort={sort} columnName={"NewDeaths"} title={language.new} handleSort={handleSort}/>
@@ -180,41 +113,35 @@ const Summary = (props) => {
                 Country.toLowerCase().includes(search.toLowerCase())
               )
               .map((country, i) => {
+                const {
+                  Country,
+                  Slug,
+                  NewConfirmed,
+                  TotalConfirmed,
+                  NewRecovered,
+                  TotalRecovered,
+                  NewDeaths,
+                  TotalDeaths,
+                } = country;
+                //prettier-ignore
                 return (
-                  <tr
-                    key={i}
-                    className={`country-table-row${i % 2 ? "-dark" : ""}`}
-                  >
-                    <td className="country-name">
-                      <Link to={country.Slug}>{country.Country}</Link>
+                  <tr key={i} className={`country-table-row${i % 2 ? "-dark" : ""}`}>
+                    <td className="country-name"><Link to={Slug}>{Country}</Link></td>
+                    <td className={`${NewConfirmed ? "new-confirmed" : ""} NewConfirmed`}>
+                      {NewConfirmed ? `+` : ""}
+                      {NewConfirmed.toLocaleString()}
                     </td>
-                    <td
-                      className={`${
-                        country.NewConfirmed ? "new-confirmed" : ""
-                      } NewConfirmed`}
-                    >
-                      {country.NewConfirmed ? `+` : ""}
-                      {country.NewConfirmed.toLocaleString()}
+                    <td>{TotalConfirmed.toLocaleString()}</td>
+                    <td className={`${NewDeaths ? "new-deaths" : ""} NewDeaths`}>
+                      {NewDeaths ? `+` : ""}
+                      {NewDeaths.toLocaleString()}
                     </td>
-                    <td>{country.TotalConfirmed.toLocaleString()}</td>
-                    <td
-                      className={`${
-                        country.NewDeaths ? "new-deaths" : ""
-                      } NewDeaths`}
-                    >
-                      {country.NewDeaths ? `+` : ""}
-                      {country.NewDeaths.toLocaleString()}
+                    <td>{TotalDeaths.toLocaleString()}</td>
+                    <td className={`${NewRecovered ? "new-recovered" : ""} NewRecovered`}>
+                      {NewRecovered ? `+` : ""}
+                      {NewRecovered.toLocaleString()}
                     </td>
-                    <td>{country.TotalDeaths.toLocaleString()}</td>
-                    <td
-                      className={`${
-                        country.NewRecovered > 0 ? "new-recovered" : ""
-                      } NewRecovered`}
-                    >
-                      {country.NewRecovered > 0 ? `+` : ""}
-                      {country.NewRecovered.toLocaleString()}
-                    </td>
-                    <td>{country.TotalRecovered.toLocaleString()}</td>
+                    <td>{TotalRecovered.toLocaleString()}</td>
                   </tr>
                 );
               })}

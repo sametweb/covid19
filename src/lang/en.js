@@ -19,15 +19,11 @@ export const en = {
   new: "New",
   total: "Total",
   singleCountryTitle: `Daily COVID-19 Statistics Since First Diagnosis`,
-  description: (country) =>
-    `This page shows COVID-19 statistics for ${country}, day by day virus spread, total diagnoses, recovered cases, and deaths.`,
   dailySpread: "Daily Spread",
   dailyRecoveries: "Daily Recoveries",
   dailyDeaths: "Daily Deaths",
   affectedPeople: "Affected People",
   totalDiagnoses: "Total Diagnoses",
-  recovered: "Recovered",
-  deaths: "Deaths",
-  language: "Language",
   compareTo: "Compare To:",
+  select: "Select a country",
 };

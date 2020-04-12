@@ -1,24 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
+import { LanguageContext } from "./App";
+import { Link } from "react-router-dom";
 
-const Header = ({ language, toggleLanguage, languageCode, lang }) => {
+const Header = () => {
+  const { language, SelectLanguageDropDown } = useContext(LanguageContext);
+
   return (
     <header>
-      <h1 className="title">{language.siteTitle}</h1>
-      <div className="lang">
-        <label>
-          {language.language}:
-          <select
-            value={languageCode}
-            onChange={(e) => toggleLanguage(e.target.value)}
-          >
-            {lang.languageList.map((L) => (
-              <option key={L.code} value={L.code}>
-                {L.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <h1 className="title">
+        <Link to="/">{language.siteTitle}</Link>
+      </h1>
+      <SelectLanguageDropDown />
     </header>
   );
 };
