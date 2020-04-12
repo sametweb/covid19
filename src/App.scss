@@ -232,6 +232,18 @@ html {
   }
 }
 
+.smaller-charts {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  .chart-container {
+    width: 49%;
+    @media (max-width: 900px) {
+      width: 100%;
+    }
+  }
+}
+
 th .countryName {
   font-size: 1.6rem;
 }

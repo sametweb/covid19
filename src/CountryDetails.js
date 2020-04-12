@@ -124,8 +124,8 @@ const CountryDetails = (props) => {
         }}
         options={produceOptions(language.dailySpread)}
       />
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <div style={{ width: "49%" }}>
+      <div className="smaller-charts">
+        <div className="chart-container">
           <Line
             data={{
               labels: countryData.map((a) => a.date.substr(a.date.length - 5)),
@@ -134,7 +134,7 @@ const CountryDetails = (props) => {
             options={produceOptions(language.recovered)}
           />
         </div>
-        <div style={{ width: "49%" }}>
+        <div className="chart-container">
           <Line
             data={{
               labels: countryData.map((a) => a.date.substr(a.date.length - 5)),
