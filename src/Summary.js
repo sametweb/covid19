@@ -4,6 +4,7 @@ import { fetchCountries, sortCountries } from "./utils/actions";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Header from "./Header";
+import Footer from "./Footer";
 import HomePieChart from "./HomePieChart";
 import { LanguageContext } from "./App";
 
@@ -142,16 +143,7 @@ const Summary = (props) => {
           </tbody>
         </table>
       </div>
-      <footer>
-        designed and coded by{" "}
-        <a href="https://github.com/sametweb" alt="samet mutevelli">
-          samet mutevelli
-        </a>{" "}
-        | data:{" "}
-        <a href="https://covid19api.com" alt="covid19 api">
-          covid19api.com
-        </a>
-      </footer>
+      <Footer />
     </>
   );
 };

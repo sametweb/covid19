@@ -4,6 +4,7 @@ import { Line } from "react-chartjs-2";
 import { addComma } from "./Summary";
 import Header from "./Header";
 import { LanguageContext } from "./App";
+import Footer from "./Footer";
 import { connect } from "react-redux";
 import {
   fetchCountries,
@@ -244,6 +245,7 @@ const CountryDetails = (props) => {
           />
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
