@@ -26,7 +26,16 @@ export const fetchCountries = () => (dispatch) => {
       ];
       dispatch({
         type: FETCH_COUNTRIES_SUCCESS,
-        payload: { countries: sorted, stats: res.data.Global },
+        payload: {
+          countries: sorted,
+          stats: {
+            ...res.data.Global,
+            TotalActiveCases:
+              res.data.Global.TotalConfirmed -
+              res.data.Global.TotalRecovered -
+              res.data.Global.TotalDeaths,
+          },
+        },
       });
     })
     .catch((err) => dispatch({ type: FETCH_COUNTRIES_ERROR, payload: err }));

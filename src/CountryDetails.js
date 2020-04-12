@@ -25,6 +25,20 @@ const CountryDetails = (props) => {
     props.fetchSingleCountry(slug);
   }, [slug]);
 
+  const produceTotalCaseNumber = (countryData, type) => {
+    const data = countryData[countryData.length - 1];
+    return data ? data[type].toLocaleString() : "";
+  };
+
+  const produceNewCaseNumber = (countries, countryName, type) => {
+    const country = countries.find(
+      (country) => country.Country === countryName
+    );
+    return country
+      ? `+${country[type].toLocaleString()} ${language.today}`
+      : "";
+  };
+
   const produceData = (label, data, rgb, dataName) => ({
     label,
     data: data.map((a) => a[dataName]),
@@ -117,6 +131,92 @@ const CountryDetails = (props) => {
           </select>
         </label>
       </div>
+      <div className="single-country-subheader">
+        <div className="box active">
+          <span className="title">{language.totalCases}</span>
+          <span className="total-number">
+            {produceTotalCaseNumber(countryData, "confirmed")}
+          </span>
+          <span className="new-number">
+            {produceNewCaseNumber(props.countries, countryName, "NewConfirmed")}
+          </span>
+        </div>
+        <div className="box recovered">
+          <span className="title">{language.totalRecoveredCases}</span>
+          <span className="total-number">
+            {produceTotalCaseNumber(countryData, "recovered")}
+          </span>
+          <span className="new-number">
+            {produceNewCaseNumber(props.countries, countryName, "NewRecovered")}
+          </span>
+        </div>
+        <div className="box deaths">
+          <span className="title">{language.totalDeaths}</span>
+          <span className="total-number">
+            {produceTotalCaseNumber(countryData, "deaths")}
+          </span>
+          <span className="new-number">
+            {produceNewCaseNumber(props.countries, countryName, "NewDeaths")}
+          </span>
+        </div>
+      </div>
+      {props.compareCountry.countryName && (
+        <div className="single-country-subheader">
+          <h3>{props.compareCountry.countryName}</h3>
+          <div className="box active">
+            <span className="title">{language.totalCases}</span>
+
+            <span className="total-number">
+              {produceTotalCaseNumber(
+                props.compareCountry.countryData,
+                "confirmed"
+              )}
+            </span>
+            <span className="new-number">
+              {produceNewCaseNumber(
+                props.countries,
+                props.compareCountry.countryName,
+                "NewConfirmed"
+              )}
+            </span>
+          </div>
+          <div className="box recovered">
+            <span className="title">{language.totalRecoveredCases}</span>
+
+            <span className="total-number">
+              {produceTotalCaseNumber(
+                props.compareCountry.countryData,
+                "recovered"
+              )}
+            </span>
+            <span className="new-number">
+              {produceNewCaseNumber(
+                props.countries,
+                props.compareCountry.countryName,
+                "NewRecovered"
+              )}
+            </span>
+          </div>
+          <div className="box deaths">
+            <span className="title">{language.totalDeaths}</span>
+
+            <span className="total-number">
+              {produceTotalCaseNumber(
+                props.compareCountry.countryData,
+                "deaths"
+              )}
+            </span>
+            <span className="new-number">
+              {produceNewCaseNumber(
+                props.countries,
+                props.compareCountry.countryName,
+                "NewDeaths"
+              )}
+            </span>
+          </div>
+        </div>
+      )}
+
       <Line
         data={{
           labels: countryData.map((a) => a.date),

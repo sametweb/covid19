@@ -49,13 +49,7 @@ const Summary = (props) => {
           <div className="summary-item active">
             <p>{language.totalActiveCases}</p>
             <p>
-              {!stats.TotalConfirmed
-                ? "..."
-                : addComma(
-                    stats.TotalConfirmed -
-                      stats.TotalDeaths -
-                      stats.TotalRecovered
-                  )}
+              {!stats.TotalConfirmed ? "..." : addComma(stats.TotalActiveCases)}
             </p>
           </div>
           <div className="summary-item recovered">

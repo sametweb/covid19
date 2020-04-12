@@ -18,9 +18,9 @@ const HomePieChart = (props) => {
           "rgba(167, 48, 48, 0.5)",
         ],
         data: [
-          stats.TotalConfirmed - stats.TotalRecovered - stats.TotalDeaths,
-          stats.TotalRecovered,
-          stats.TotalDeaths,
+          (stats.TotalActiveCases / stats.TotalConfirmed) * 100,
+          (stats.TotalRecovered / stats.TotalConfirmed) * 100,
+          (stats.TotalDeaths / stats.TotalConfirmed) * 100,
         ],
       },
     ],
@@ -42,7 +42,7 @@ const HomePieChart = (props) => {
         tooltips: {
           callbacks: {
             label: (a, b) =>
-              `${b.labels[a.index]}: ${addComma(b.datasets[0].data[a.index])}`,
+              `${b.labels[a.index]}: %${addComma(b.datasets[0].data[a.index])}`,
           },
         },
       }}

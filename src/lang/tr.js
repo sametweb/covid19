@@ -26,4 +26,5 @@ export const tr = {
   totalDiagnoses: "Toplam Teşhisler",
   compareTo: "Şu ülkeyle karşılaştır:",
   select: "Ülke seçiniz",
+  today: "bugün",
 };

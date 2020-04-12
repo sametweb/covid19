@@ -26,4 +26,5 @@ export const en = {
   totalDiagnoses: "Total Diagnoses",
   compareTo: "Compare To:",
   select: "Select a country",
+  today: "today",
 };
