@@ -40,6 +40,7 @@ export const reducer = (state = INITIAL_STATE, action) => {
         ...state,
         loading: true,
         singleCountry: INITIAL_STATE.singleCountry,
+        compareCountry: INITIAL_STATE.compareCountry,
         error: "",
       };
     case FETCH_SINGLE_COUNTRY_SUCCESS:
