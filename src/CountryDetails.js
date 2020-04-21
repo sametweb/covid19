@@ -11,13 +11,13 @@ import {
   Tooltip,
   Area,
   ResponsiveContainer,
-  Legend
+  Legend,
 } from "recharts";
 
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-const CountryDetails = props => {
+const CountryDetails = (props) => {
   const [languageCode, setLanguageCode] = useState(() => {
     if (!localStorage.getItem("langCode"))
       localStorage.setItem("langCode", lang.defaultLanguage);
@@ -27,7 +27,7 @@ const CountryDetails = props => {
   const [data, setData] = useState([]);
   const language = lang[languageCode].CountryDetails;
 
-  const toggleLanguage = code => {
+  const toggleLanguage = (code) => {
     localStorage.setItem("langCode", code);
     setLanguageCode(localStorage.getItem("langCode"));
   };
@@ -39,10 +39,10 @@ const CountryDetails = props => {
     // },
     axisY: {
       title: language.affectedPeople,
-      includeZero: false
+      includeZero: false,
     },
     toolTip: {
-      shared: true
+      shared: true,
     },
     data: [
       {
@@ -50,37 +50,37 @@ const CountryDetails = props => {
         name: language.totalDiagnoses,
         showInLegend: true,
         color: "royalblue",
-        dataPoints: data.map(confirmed => ({
+        dataPoints: data.map((confirmed) => ({
           y: confirmed.confirmed,
-          label: confirmed.date
-        }))
+          label: confirmed.date,
+        })),
       },
       {
         type: "line",
         name: language.recovered,
         showInLegend: true,
         color: "limegreen",
-        dataPoints: data.map(recovered => ({
+        dataPoints: data.map((recovered) => ({
           y: recovered.recovered,
-          label: recovered.date
-        }))
+          label: recovered.date,
+        })),
       },
       {
         type: "line",
         name: language.deaths,
         showInLegend: true,
         color: "orangered",
-        dataPoints: data.map(deaths => ({
+        dataPoints: data.map((deaths) => ({
           y: deaths.deaths,
-          label: deaths.date
-        }))
-      }
-    ]
+          label: deaths.date,
+        })),
+      },
+    ],
   };
 
   const { slug } = props.match.params;
 
-  const getData = country => {
+  const getData = (country) => {
     const confirmedRequest = axios.get(
       `https://api.covid19api.com/total/dayone/country/${country}/status/confirmed`
     );
@@ -95,21 +95,21 @@ const CountryDetails = props => {
       axios.spread((...responses) => {
         setCountry(responses[1].data[0]?.Country);
         setData(
-          responses[0].data.map(confirmed => {
+          responses[0].data.map((confirmed) => {
             const recovered = responses[1].data.length
               ? responses[1].data.find(
-                  recovered => recovered.Date === confirmed.Date
+                  (recovered) => recovered.Date === confirmed.Date
                 )
               : [];
             const deaths = responses[2].data.length
-              ? responses[2].data.find(death => death.Date === confirmed.Date)
+              ? responses[2].data.find((death) => death.Date === confirmed.Date)
               : [];
 
             return {
               date: confirmed.Date.substr(0, 10),
               confirmed: confirmed.Cases,
               recovered: recovered?.Cases || 0,
-              deaths: deaths?.Cases || 0
+              deaths: deaths?.Cases || 0,
             };
           })
         );
@@ -130,9 +130,9 @@ const CountryDetails = props => {
             {language.language}:
             <select
               value={languageCode}
-              onChange={e => toggleLanguage(e.target.value)}
+              onChange={(e) => toggleLanguage(e.target.value)}
             >
-              {lang.languageList.map(L => (
+              {lang.languageList.map((L) => (
                 <option key={L.code} value={L.code}>
                   {L.name}
                 </option>
@@ -146,7 +146,7 @@ const CountryDetails = props => {
         <meta name="description" content={language.description(country)} />
       </Helmet>
       <h3>COVID-19 Spread in {country}</h3>
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer width="100%" height={250}>
         <AreaChart
           width={400}
           height={250}
@@ -170,14 +170,14 @@ const CountryDetails = props => {
           <Area
             type="monotone"
             dataKey="confirmed"
-            stroke="blue"
-            fillOpacity={0.2}
-            fill="skyblue"
+            stroke="#2b580c"
+            fillOpacity={0.1}
+            fill="#2b580c"
           />
         </AreaChart>
       </ResponsiveContainer>
       <h3>Deaths and Recoveries</h3>
-      <ResponsiveContainer width="100%" height={200}>
+      <ResponsiveContainer width="100%" height={250}>
         <AreaChart
           width={400}
           height={250}
@@ -201,16 +201,16 @@ const CountryDetails = props => {
           <Area
             type="monotone"
             dataKey="recovered"
-            stroke="green"
-            fillOpacity={0.2}
-            fill="lightgreen"
+            stroke="#537ec5"
+            fillOpacity={0.1}
+            fill="#537ec5"
           />
           <Area
             type="monotone"
             dataKey="deaths"
-            stroke="crimson"
+            stroke="#f39422"
             fillOpacity={0.1}
-            fill="red"
+            fill="#f39422"
           />
           <Legend />
         </AreaChart>

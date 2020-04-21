@@ -5,7 +5,7 @@ import { PieChart, Pie, Legend, Tooltip, Cell } from "recharts";
 import { Helmet } from "react-helmet";
 import lang from "./lang";
 
-const Summary = props => {
+const Summary = (props) => {
   const [languageCode, setLanguageCode] = useState(() => {
     if (!localStorage.getItem("langCode"))
       localStorage.setItem("langCode", lang.defaultLanguage);
@@ -19,7 +19,7 @@ const Summary = props => {
 
   const language = lang[languageCode].Summary;
 
-  const toggleLanguage = code => {
+  const toggleLanguage = (code) => {
     localStorage.setItem("langCode", code);
     setLanguageCode(localStorage.getItem("langCode"));
   };
@@ -27,31 +27,30 @@ const Summary = props => {
   const data01 = [
     { name: language.activeDiagnoses, value: stats.active },
     { name: language.deaths, value: stats.deaths },
-    { name: language.recovered, value: stats.recovered }
+    { name: language.recovered, value: stats.recovered },
   ];
 
-  const colors = ["royalblue", "orangered", "limegreen"];
+  const colors = ["#293a80", "#f39422", "#537ec5"];
 
   useEffect(() => {
     axios
       .get("https://api.covid19api.com/summary")
-      .then(res => {
+      .then((res) => {
         const data = res.data.Countries.filter(
-          country =>
-            country.Country &&
-            country.TotalConfirmed &&
-            !country.Country.includes("Islamic") &&
-            !country.Country.includes("Korea, South") &&
-            !country.Country.includes("Republic of Korea") &&
-            !country.Country.includes("Viet Nam") &&
-            !country.Country.includes("Taiwan*") &&
-            !country.Country.includes("Bahamas, The") &&
-            !country.Country.includes("Gambia, The")
-        ).map(country =>
-          country.Country === "US"
-            ? { ...country, Country: "United States of America" }
-            : country
+          (country) => country.Country && country.TotalConfirmed
+          // !country.Country.includes("Islamic") &&
+          // !country.Country.includes("Korea, South") &&
+          // !country.Country.includes("Republic of Korea") &&
+          // !country.Country.includes("Viet Nam") &&
+          // !country.Country.includes("Taiwan*") &&
+          // !country.Country.includes("Bahamas, The") &&
+          // !country.Country.includes("Gambia, The")
         );
+        // .map((country) =>
+        //   country.Country === "US"
+        //     ? { ...country, Country: "United States of America" }
+        //     : country
+        // );
         setCountries(data);
         setStats({
           total: data.reduce((acc, item) => (acc += item.TotalConfirmed), 0),
@@ -63,13 +62,13 @@ const Summary = props => {
             (acc, item) => (acc += item.TotalRecovered),
             0
           ),
-          deaths: data.reduce((acc, item) => (acc += item.TotalDeaths), 0)
+          deaths: data.reduce((acc, item) => (acc += item.TotalDeaths), 0),
         });
       })
-      .catch(err => console.log(err));
+      .catch((err) => console.log(err));
   }, []);
 
-  const sortCountries = columnName => {
+  const sortCountries = (columnName) => {
     setSort({ by: columnName, order: sort.order === "desc" ? "asc" : "desc" });
   };
 
@@ -79,9 +78,10 @@ const Summary = props => {
         sort.order === "desc"
           ? b[sort.by] - a[sort.by]
           : a[sort.by] - b[sort.by]
-      )
+      ),
     ]);
   }, [sort.by, sort.order]);
+  console.log(countries?.filter(({ Country }) => Country.includes("United")));
 
   return (
     <>
@@ -96,9 +96,9 @@ const Summary = props => {
             {language.language}:
             <select
               value={languageCode}
-              onChange={e => toggleLanguage(e.target.value)}
+              onChange={(e) => toggleLanguage(e.target.value)}
             >
-              {lang.languageList.map(L => (
+              {lang.languageList.map((L) => (
                 <option key={L.code} value={L.code}>
                   {L.name}
                 </option>
@@ -115,7 +115,7 @@ const Summary = props => {
             isAnimationActive
             data={data01}
             outerRadius={80}
-            label={entry => `${entry.name}: ${entry.value.toLocaleString()}`}
+            label={(entry) => `${entry.name}: ${entry.value.toLocaleString()}`}
           >
             {data01.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={colors[index]} />
@@ -131,7 +131,7 @@ const Summary = props => {
             <input
               placeholder={language.searchPlaceholder}
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
             />
             <button onClick={() => setSearch("")}>{language.clear}</button>
           </div>
@@ -234,7 +234,7 @@ const RenderColumnHeader = ({ sort, columnName, title, sortCountries }) => {
   return (
     <th
       className={`sort ${columnName}`}
-      style={sort.by === columnName ? { background: "darkred" } : {}}
+      style={sort.by === columnName ? { background: "#f39422" } : {}}
       onClick={() => sortCountries(columnName)}
     >
       {sort.by !== columnName ? (

@@ -3,7 +3,7 @@ export const en = {
   Summary: {
     title: "COVID-19 Worldwide Total Statistics",
     description: 'Daily updated COVID-19 pandemic statistics, browse country by country COVID-19 numbers',
-    subtitle: num => `Total ${Number(num).toLocaleString()} people 
+    subtitle: num => `A total of ${Number(num).toLocaleString()} people 
         worldwide has been diagnosed with COVID-19.`,
     language: 'Language',
     activeDiagnoses: 'Active Diagnoses',

@@ -39,8 +39,8 @@ html {
 
     .subtitle {
       width: 100%;
-      border: 1px solid darkgoldenrod;
-      background-color: tan;
+      // border: 1px solid rgb(83, 126, 197);
+      background-color: rgba(83, 126, 197, 0.2);
       padding: 10px 0;
     }
   }
@@ -66,14 +66,17 @@ html {
       }
 
       .search {
-        input,
-        button {
-          border: 1px solid #e1e1e2;
+        input {
           padding: 1rem;
+          background-color: rgba(83, 126, 197, 0.2);
+          border: 0;
         }
 
         button {
-          border-left: 0;
+          border: 0;
+          padding: 1rem;
+          background-color: #010038;
+          color: white;
         }
       }
     }
@@ -105,7 +108,7 @@ html {
           position: sticky;
           top: 0;
           z-index: 10;
-          background: #333;
+          background: #010038;
           color: white;
 
           @media (max-width: 600px) {
@@ -127,7 +130,8 @@ html {
           font-size: 1.3rem;
           padding: 3px 0;
         }
-        .country-table-row {
+        .country-table-row,
+        .country-table-row-dark {
           &:hover {
             background: #e1e1e2 !important;
           }
@@ -142,7 +146,7 @@ html {
           }
           & > a {
             text-decoration: none;
-            color: royalblue;
+            color: #293a80;
             font-weight: bold;
             &:hover {
               text-decoration: underline;

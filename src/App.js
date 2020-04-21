@@ -3,6 +3,10 @@ import Summary from "./Summary";
 import CountryDetails from "./CountryDetails";
 import "./App.scss";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import ReactGA from "react-ga";
+
+ReactGA.initialize("UA-146893305-4");
+ReactGA.pageview(window.location.pathname + window.location.search);
 
 function App() {
   return (
