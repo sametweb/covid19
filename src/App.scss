@@ -2,9 +2,26 @@
   box-sizing: border-box;
 }
 
+a {
+  color: royalblue;
+  text-decoration: none;
+}
+
 html {
   font-family: helvetica;
   font-size: 62.5%;
+}
+
+.active {
+  background: rgba(48, 105, 167, 0.3);
+}
+
+.recovered {
+  background: rgba(78, 167, 48, 0.3);
+}
+
+.deaths {
+  background: rgba(167, 48, 48, 0.3);
 }
 
 .App {
@@ -23,7 +40,15 @@ html {
     flex-wrap: wrap;
 
     .title {
-      font-size: 26px;
+      text-align: left;
+      h1 {
+        font-size: 2.6rem;
+        margin: 0;
+        padding: 0;
+      }
+      h5 {
+        font-size: 1.6rem;
+      }
     }
 
     .lang {
@@ -45,10 +70,47 @@ html {
     }
   }
 
-  .summary-chart {
+  .single-country-header {
+    background-color: #f8f2d9;
+    padding: 2rem;
     display: flex;
-    justify-content: center;
-    margin: 0 0 30px 0;
+    justify-content: space-between;
+    align-items: center;
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .single-country-subheader {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 10px 0 0 0;
+    & > h3 {
+      width: 100%;
+      text-align: left;
+      font-size: 1.6rem;
+      background-color: #f8f2d9;
+      padding: 2rem;
+    }
+    .box {
+      display: flex;
+      flex-direction: column;
+      width: 32.5%;
+      padding: 10px;
+      .title {
+        font-size: 1.4rem;
+        padding: 0 0 10px 0;
+      }
+      .total-number {
+        font-size: 3.2rem;
+        padding: 0 0 5px 0;
+        font-weight: bold;
+      }
+      .new-number {
+        font-size: 1.3rem;
+      }
+    }
   }
 
   .country-list {
@@ -63,20 +125,29 @@ html {
         font-size: 2rem;
         margin: 0;
         padding: 0;
+        @media (max-width: 500px) {
+          padding: 0 0 2rem 0;
+        }
       }
 
       .search {
-        input {
+        @media (max-width: 500px) {
+          width: 100%;
+        }
+        input,
+        button {
+          border: 1px solid #e1e1e2;
           padding: 1rem;
-          background-color: rgba(83, 126, 197, 0.2);
-          border: 0;
+          @media (max-width: 500px) {
+            width: 80%;
+          }
         }
 
         button {
-          border: 0;
-          padding: 1rem;
-          background-color: #010038;
-          color: white;
+          border-left: 0;
+          @media (max-width: 500px) {
+            width: 20%;
+          }
         }
       }
     }
@@ -129,6 +200,12 @@ html {
         td {
           font-size: 1.3rem;
           padding: 3px 0;
+          @media (max-width: 800px) {
+            font-size: 1.2rem;
+          }
+          @media (max-width: 500px) {
+            font-size: 1rem;
+          }
         }
         .country-table-row,
         .country-table-row-dark {
@@ -154,24 +231,95 @@ html {
           }
         }
         .new-confirmed {
-          color: rgb(168, 137, 45);
+          color: rgba(48, 105, 167, 1);
         }
         .new-deaths {
-          color: crimson;
+          color: rgba(167, 48, 48, 1);
         }
         .new-recovered {
-          color: green;
+          color: rgba(78, 167, 48, 1);
         }
       }
     }
   }
 }
 
-th .countryName {
-  font-size: 1.6rem;
+.summary {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 2.2rem;
+  .summary-header {
+    padding: 20px;
+    margin: 0 0 2% 0;
+    font-size: 3rem;
+    font-weight: bold;
+    background: rgba(167, 139, 48, 0.3);
+    width: 100%;
+    @media (max-width: 500px) {
+      font-size: 2.2rem;
+    }
+  }
+  .summary-body {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 32%;
+    @media (max-width: 800px) {
+      width: 100%;
+    }
+    .summary-item {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      padding: 10px;
+      width: 100%;
+      margin: 0 0 3% 0;
+      @media (max-width: 800px) {
+        width: 32%;
+      }
+
+      p {
+        margin: 0;
+        padding: 5px 0;
+        font-weight: bold;
+        @media (max-width: 500px) {
+          font-size: 1.7rem;
+        }
+        &:first-child {
+          font-size: 1.6rem;
+          font-weight: normal;
+          @media (max-width: 500px) {
+            font-size: 1.3rem;
+          }
+        }
+      }
+    }
+  }
+
+  .summary-chart {
+    width: 66%;
+    @media (max-width: 800px) {
+      width: 100%;
+    }
+  }
 }
 
-td.countryName a:hover {
+.smaller-charts {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  .chart-container {
+    width: 49%;
+    @media (max-width: 900px) {
+      width: 100%;
+    }
+  }
+}
+
+th .countryName {
+  font-size: 1.6rem;
 }
 
 footer {
@@ -212,4 +360,17 @@ footer {
   to {
     transform: rotate(360deg);
   }
+}
+
+.loading {
+  z-index: 10;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background: #000;
+  opacity: 0.5;
 }
