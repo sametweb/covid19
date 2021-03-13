@@ -17,7 +17,7 @@ export const FETCH_COMPARE_COUNTRY_ERROR = "FETCH_COMPARE_COUNTRY_ERROR";
 export const fetchCountries = () => (dispatch) => {
   dispatch({ type: FETCH_COUNTRIES_START });
   axios
-    .get("https://api.covid19api.com/summary")
+    .get("https://covid19-backend-api.herokuapp.com/summary")
     .then((res) => {
       const sorted = [
         ...res.data.Countries.sort(
@@ -53,13 +53,13 @@ export const sortCountries = (countries, order, by) => {
 export const fetchSingleCountry = (countrySlug) => (dispatch) => {
   dispatch({ type: FETCH_SINGLE_COUNTRY_START });
   const confirmedRequest = axios.get(
-    `https://api.covid19api.com/total/country/${countrySlug}/status/confirmed`
+    `https://covid19-backend-api.herokuapp.com/total/country/${countrySlug}/status/confirmed`
   );
   const recoveredRequest = axios.get(
-    `https://api.covid19api.com/total/country/${countrySlug}/status/recovered`
+    `https://covid19-backend-api.herokuapp.com/total/country/${countrySlug}/status/recovered`
   );
   const deathsRequest = axios.get(
-    `https://api.covid19api.com/total/country/${countrySlug}/status/deaths`
+    `https://covid19-backend-api.herokuapp.com/total/country/${countrySlug}/status/deaths`
   );
 
   axios
@@ -98,13 +98,13 @@ export const fetchSingleCountry = (countrySlug) => (dispatch) => {
 export const fetchCompareCountry = (countrySlug) => (dispatch) => {
   dispatch({ type: FETCH_COMPARE_COUNTRY_START });
   const confirmedRequest = axios.get(
-    `https://api.covid19api.com/total/country/${countrySlug}/status/confirmed`
+    `https://covid19-backend-api.herokuapp.com/total/country/${countrySlug}/status/confirmed`
   );
   const recoveredRequest = axios.get(
-    `https://api.covid19api.com/total/country/${countrySlug}/status/recovered`
+    `https://covid19-backend-api.herokuapp.com/total/country/${countrySlug}/status/recovered`
   );
   const deathsRequest = axios.get(
-    `https://api.covid19api.com/total/country/${countrySlug}/status/deaths`
+    `https://covid19-backend-api.herokuapp.com/total/country/${countrySlug}/status/deaths`
   );
 
   axios
